@@ -5,6 +5,8 @@
 
   <system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/classes/logging.properties" />
+    <property name="gae.application.name" value="${project.name}" />
+    <property name="gae.application.version" value="${gae.application.version}" />
   </system-properties>
 
 
@@ -16,6 +18,7 @@
     <service>mail</service>
   </inbound-services>
 
+  <threadsafe>true</threadsafe>
   <ssl-enabled>true</ssl-enabled>
   <sessions-enabled>true</sessions-enabled>
 </appengine-web-app>

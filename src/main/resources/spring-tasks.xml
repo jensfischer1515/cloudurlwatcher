@@ -4,9 +4,18 @@
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+  <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+    <constructor-arg>
+      <bean id="connectionManager" class="org.esxx.js.protocol.GAEConnectionManager" />
+    </constructor-arg>
+  </bean>
+
+  <bean id="urlWatcher" class="de.openended.cloudurlwatcher.task.UrlWatcherImpl">
+    <property name="httpClient" ref="httpClient" />
+  </bean>
 
   <bean id="watcherTask" class="de.openended.cloudurlwatcher.task.TaskOptionsFactoryBean">
-    <!--property name="taskName" value="Watcher" /-->
+    <!--property name="taskName" value="Watcher" / -->
     <property name="url" value="/queue/watcher" />
     <property name="headers">
       <map>
@@ -20,7 +29,7 @@
         <entry key="paramName2" value="paramValue2" />
       </map>
     </property>
-    <!--property name="payload" value="This is a payload" /-->
+    <!--property name="payload" value="This is a payload" / -->
     <property name="countdownMillis" value="0" />
     <property name="etaMillis" value="0" />
   </bean>
