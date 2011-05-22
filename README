@@ -1,0 +1,5 @@
+Project: cloudurlwatcher
+Author:  Jens Fischer <soth@gmx.net>
+Since:   2011-05-22
+
+Periodically watch a number of URLs using Google's App Engine cloud.
