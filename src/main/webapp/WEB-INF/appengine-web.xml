@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
+  <application>${project.name}</application>
+  <version>${gae.application.version}</version>
+
+  <system-properties>
+    <property name="java.util.logging.config.file" value="WEB-INF/classes/logging.properties" />
+  </system-properties>
+
+
+  <!--env-variables> <env-var name="DEFAULT_ENCODING" value="UTF-8" /> </env-variables -->
+
+  <inbound-services>
+    <service>xmpp_message</service>
+    <!-- http://code.google.com/intl/de-DE/appengine/docs/java/mail/overview.html#Receiving_Mail -->
+    <service>mail</service>
+  </inbound-services>
+
+  <ssl-enabled>true</ssl-enabled>
+  <sessions-enabled>true</sessions-enabled>
+</appengine-web-app>

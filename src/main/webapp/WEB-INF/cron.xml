@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/cron/MINUTELY</url>
+    <description>Execute every minute</description>
+    <schedule>every 1 minutes</schedule>
+  </cron>
+
+  <cron>
+    <url>/cron/HOURLY</url>
+    <description>Execute every hour</description>
+    <schedule>every 1 hours synchronized</schedule>
+  </cron>
+
+  <cron>
+    <url>/cron/DAILY</url>
+    <description>Execute every day</description>
+    <schedule>every day 00:00</schedule>
+  </cron>
+
+  <cron>
+    <url>/cron/WEEKLY</url>
+    <description>Execute every week</description>
+    <schedule>every sunday 00:00</schedule>
+  </cron>
+
+  <cron>
+    <url>/cron/MONTHLY</url>
+    <description>Execute every month</description>
+    <schedule>1 of month 00:00</schedule>
+  </cron>
+
+  <cron>
+    <url>/cron/YEARLY</url>
+    <description>Execute every year</description>
+    <schedule>1 of january 00:00</schedule>
+  </cron>
+</cronentries>

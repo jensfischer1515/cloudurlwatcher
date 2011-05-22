@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+
+  <bean id="watcherTask" class="de.openended.cloudurlwatcher.task.TaskOptionsFactoryBean">
+    <!--property name="taskName" value="Watcher" /-->
+    <property name="url" value="/queue/watcher" />
+    <property name="headers">
+      <map>
+        <entry key="headerName1" value="headerValue1" />
+        <entry key="headerName2" value="headerValue2" />
+      </map>
+    </property>
+    <property name="params">
+      <map>
+        <entry key="paramName1" value="paramValue1" />
+        <entry key="paramName2" value="paramValue2" />
+      </map>
+    </property>
+    <!--property name="payload" value="This is a payload" /-->
+    <property name="countdownMillis" value="0" />
+    <property name="etaMillis" value="0" />
+  </bean>
+
+  <util:map id="scheduledTasks" key-type="de.openended.cloudurlwatcher.cron.Schedule" value-type="java.util.ArrayList">
+    <entry>
+      <key>
+        <bean class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+          <constructor-arg value="MINUTELY" />
+        </bean>
+      </key>
+      <util:list value-type="com.google.appengine.api.taskqueue.TaskOptions">
+        <ref bean="watcherTask" />
+      </util:list>
+    </entry>
+
+    <entry>
+      <key>
+        <bean class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+          <constructor-arg value="HOURLY" />
+        </bean>
+      </key>
+      <util:list value-type="com.google.appengine.api.taskqueue.TaskOptions">
+      </util:list>
+    </entry>
+
+    <entry>
+      <key>
+        <bean class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+          <constructor-arg value="DAILY" />
+        </bean>
+      </key>
+      <util:list value-type="com.google.appengine.api.taskqueue.TaskOptions">
+      </util:list>
+    </entry>
+
+    <entry>
+      <key>
+        <bean class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+          <constructor-arg value="WEEKLY" />
+        </bean>
+      </key>
+      <util:list value-type="com.google.appengine.api.taskqueue.TaskOptions">
+      </util:list>
+    </entry>
+
+    <entry>
+      <key>
+        <bean class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+          <constructor-arg value="MONTHLY" />
+        </bean>
+      </key>
+      <util:list value-type="com.google.appengine.api.taskqueue.TaskOptions">
+      </util:list>
+    </entry>
+
+    <entry>
+      <key>
+        <bean class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+          <constructor-arg value="YEARLY" />
+        </bean>
+      </key>
+      <util:list value-type="com.google.appengine.api.taskqueue.TaskOptions">
+      </util:list>
+    </entry>
+  </util:map>
+
+</beans>

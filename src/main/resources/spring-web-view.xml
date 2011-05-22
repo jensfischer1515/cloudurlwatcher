@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <!--bean id="viewNameTranslator" class="org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator"> <description>15.10.3 The 
+    View - RequestToViewNameTranslator</description> </bean -->
+
+
+  <!--bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver"> <property name="order" value="1" /> <property name="mediaTypes"> 
+    <map> <entry key="json" value="application/json" /> </map> </property> <property name="defaultViews"> <list> <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" 
+    /> </list> </property> <property name="ignoreAcceptHeader" value="true" /> </bean -->
+
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+    <property name="exposeSpringMacroHelpers" value="true" />
+    <property name="requestContextAttribute" value="rc" />
+    <property name="cache" value="false" />
+    <property name="prefix" value="/" />
+    <property name="suffix" value=".ftl" />
+    <property name="contentType" value="text/html; charset=UTF-8" />
+  </bean>
+
+  <bean id="freeMarkerConfigurer" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <property name="templateLoaderPath" value="/WEB-INF/views" />
+    <property name="freemarkerSettings">
+      <props>
+        <prop key="datetime_format">dd.MM.yyyy</prop>
+        <prop key="default_encoding">UTF-8</prop>
+        <prop key="auto_import">
+          /spring.ftl as spring
+        </prop>
+        <prop key="whitespace_stripping">true</prop>
+        <!--prop key="number_format">######################</prop -->
+        <!--prop key="locale">de</prop -->
+        <prop key="url_escaping_charset">UTF-8</prop>
+        <prop key="template_exception_handler">rethrow</prop>
+      </props>
+    </property>
+    <property name="freemarkerVariables">
+      <map>
+      </map>
+    </property>
+  </bean>
+</beans>
