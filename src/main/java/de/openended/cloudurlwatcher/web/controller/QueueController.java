@@ -1,6 +1,5 @@
 package de.openended.cloudurlwatcher.web.controller;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
@@ -13,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import de.openended.cloudurlwatcher.task.UrlWatchResult;
-import de.openended.cloudurlwatcher.task.UrlWatcher;
+import de.openended.cloudurlwatcher.service.UrlWatchService;
 
 /**
  * You can examine and manipulate tasks from the developer console at:
@@ -29,7 +27,7 @@ public class QueueController {
     private static final Logger logger = LoggerFactory.getLogger(QueueController.class);
 
     @Autowired
-    private UrlWatcher urlWatcher;
+    private UrlWatchService urlWatchService;
 
     /**
      * 
@@ -66,12 +64,7 @@ public class QueueController {
             logger.debug("Param: {} = {}", paramName, webRequest.getParameter(paramName));
         }
 
-        try {
-            UrlWatchResult result = urlWatcher.watchUrl("http://store.apple.com/de");
-            logger.info(result.toString());
-        } catch (IOException e) {
-            logger.error("Error watching URL", e);
-        }
+        urlWatchService.watchUrl("http://store.apple.com/de");
         return String.format("Executed task '%s'", taskName);
     }
 }

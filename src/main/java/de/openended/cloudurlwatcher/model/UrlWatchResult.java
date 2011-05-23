@@ -1,7 +1,12 @@
-package de.openended.cloudurlwatcher.task;
+package de.openended.cloudurlwatcher.model;
 
-import java.io.Serializable;
 import java.util.Date;
+
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -9,16 +14,25 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class UrlWatchResult implements Comparable<UrlWatchResult>, Serializable {
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
+public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
 
     private static final long serialVersionUID = 799651060422411138L;
 
+    @PrimaryKey
+    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    private Long id;
+
+    @Persistent
     private final long timestamp = new Date().getTime();
 
+    @Persistent
     private final String url;
 
+    @Persistent
     private int statusCode;
 
+    @Persistent
     private long responseTimeMillis;
 
     public UrlWatchResult(String url) {
@@ -48,13 +62,24 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Serializable 
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("url", url).append("timestamp", timestamp)
-                .append("statusCode", statusCode).append("responseTimeMillis", responseTimeMillis).toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", id).append("url", url)
+                .append("timestamp", timestamp).append("statusCode", statusCode).append("responseTimeMillis", responseTimeMillis)
+                .toString();
     }
 
     @Override
     public int compareTo(UrlWatchResult that) {
         return new CompareToBuilder().append(this.url, that.url).append(this.timestamp, that.timestamp).toComparison();
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public long getTimestamp() {
