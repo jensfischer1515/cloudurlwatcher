@@ -24,20 +24,29 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
     private Long id;
 
     @Persistent
-    private final long timestamp = new Date().getTime();
-
-    @Persistent
-    private final String url;
+    private long responseTimeMillis;
 
     @Persistent
     private int statusCode;
 
     @Persistent
-    private long responseTimeMillis;
+    private long timestamp = new Date().getTime();
+
+    @Persistent
+    private String url;
+
+    public UrlWatchResult() {
+        super();
+    }
 
     public UrlWatchResult(String url) {
-        super();
+        this();
         this.url = url;
+    }
+
+    @Override
+    public int compareTo(UrlWatchResult that) {
+        return new CompareToBuilder().append(this.url, that.url).append(this.timestamp, that.timestamp).toComparison();
     }
 
     @Override
@@ -56,30 +65,16 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
     }
 
     @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(this.url).append(this.timestamp).toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", id).append("url", url)
-                .append("timestamp", timestamp).append("statusCode", statusCode).append("responseTimeMillis", responseTimeMillis)
-                .toString();
-    }
-
-    @Override
-    public int compareTo(UrlWatchResult that) {
-        return new CompareToBuilder().append(this.url, that.url).append(this.timestamp, that.timestamp).toComparison();
-    }
-
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+    public long getResponseTimeMillis() {
+        return responseTimeMillis;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 
     public long getTimestamp() {
@@ -90,19 +85,36 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
         return url;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(this.url).append(this.timestamp).toHashCode();
     }
 
-    public long getResponseTimeMillis() {
-        return responseTimeMillis;
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setResponseTimeMillis(long responseTimeMillis) {
+        this.responseTimeMillis = responseTimeMillis;
     }
 
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 
-    public void setResponseTimeMillis(long responseTimeMillis) {
-        this.responseTimeMillis = responseTimeMillis;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", id).append("url", url)
+                .append("timestamp", timestamp).append("statusCode", statusCode).append("responseTimeMillis", responseTimeMillis)
+                .toString();
     }
 }
