@@ -8,6 +8,7 @@
   <context:annotation-config />
   <context:component-scan base-package="de.openended.cloudurlwatcher" />
 
+  <import resource="classpath:spring-repository.xml" />
   <import resource="classpath:spring-tasks.xml" />
   <import resource="classpath:spring-web.xml" />
   <import resource="classpath:spring-web-view.xml" />

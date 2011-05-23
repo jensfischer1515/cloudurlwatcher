@@ -7,6 +7,8 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Queries;
+import javax.jdo.annotations.Query;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -14,14 +16,17 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+import com.google.appengine.api.datastore.Key;
+
+@PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
+@Queries({ @Query(name = "findByUrl", value = "SELECT FROM UrlWatchResult uwr where uwr.url == :url") })
 public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
 
     private static final long serialVersionUID = 799651060422411138L;
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Long id;
+    private Key id;
 
     @Persistent
     private long responseTimeMillis;
@@ -65,7 +70,7 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
     }
 
     @Override
-    public Long getId() {
+    public Key getId() {
         return id;
     }
 
@@ -91,7 +96,7 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(Key id) {
         this.id = id;
     }
 

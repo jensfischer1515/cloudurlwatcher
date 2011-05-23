@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.openended.cloudurlwatcher.model.UrlWatchResult;
-import de.openended.cloudurlwatcher.repository.UrlWatchResultRepository;
+import de.openended.cloudurlwatcher.repository.GenericRepository;
 import de.openended.cloudurlwatcher.watch.UrlWatcher;
 
 @Service
@@ -20,14 +20,15 @@ public class UrlWatchServiceImpl implements UrlWatchService {
     protected UrlWatcher urlWatcher;
 
     @Autowired
-    protected UrlWatchResultRepository urlWatchResultRepository;
+    protected GenericRepository repository;
 
     @Override
     public void watchUrl(String url) {
+
         try {
             UrlWatchResult result = urlWatcher.watchUrl(url);
-            Long id = urlWatchResultRepository.create(result);
-            logger.debug("Created model with id {}", id);
+            result = repository.save(result);
+            logger.info("Saved model with id {}", result.getId());
         } catch (IOException e) {
             throw new ServiceException(e);
         }
