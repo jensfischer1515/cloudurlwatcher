@@ -16,17 +16,15 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-import com.google.appengine.api.datastore.Key;
-
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
-@Queries({ @Query(name = "findByUrl", value = "SELECT FROM UrlWatchResult uwr where uwr.url == :url") })
+@Queries({ @Query(name = "findByUrl", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult uwr where uwr.url == :url") })
 public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
 
     private static final long serialVersionUID = 799651060422411138L;
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Key id;
+    private Long id;
 
     @Persistent
     private long responseTimeMillis;
@@ -70,7 +68,7 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
     }
 
     @Override
-    public Key getId() {
+    public Long getId() {
         return id;
     }
 
@@ -96,7 +94,7 @@ public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
     }
 
     @Override
-    public void setId(Key id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
