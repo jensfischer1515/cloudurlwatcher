@@ -24,7 +24,6 @@ public class UrlWatchServiceImpl implements UrlWatchService {
 
     @Override
     public void watchUrl(String url) {
-
         try {
             UrlWatchResult result = urlWatcher.watchUrl(url);
             result = repository.save(result);

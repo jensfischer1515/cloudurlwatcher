@@ -3,13 +3,14 @@ package de.openended.cloudurlwatcher.repository.jdo;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.jdo.JDOException;
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+
 import org.springframework.orm.ObjectRetrievalFailureException;
+import org.springframework.orm.jdo.JdoCallback;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ClassUtils;
-
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
 import de.openended.cloudurlwatcher.model.Model;
 import de.openended.cloudurlwatcher.repository.GenericRepository;
@@ -26,10 +27,8 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
 
     @Override
     @Transactional(readOnly = true)
-    public <T extends Model> T findByKey(final Class<T> clazz, final Long id) {
-        Key key = createKey(clazz, id);
-        T entity = jdoTemplate.getObjectById(clazz, key);
-
+    public <T extends Model> T findById(final Class<T> clazz, final Long id) {
+        T entity = jdoTemplate.getObjectById(clazz, id);
         if (entity == null) {
             throw new ObjectRetrievalFailureException(clazz, id);
         }
@@ -46,14 +45,20 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
     @Transactional
     @SuppressWarnings("unchecked")
     public <T extends Model> void remove(final T entity) {
-        Key key = createKey(entity.getClass(), entity.getId());
-        T persistentEntity = (T) jdoTemplate.getObjectById(entity.getClass(), key);
+        T persistentEntity = (T) jdoTemplate.getObjectById(entity.getClass(), entity.getId());
         jdoTemplate.deletePersistent(persistentEntity);
     }
 
     @Override
     public <T extends Model> void removeAll(final Class<T> clazz) {
-        jdoTemplate.deletePersistentAll(findAll(clazz));
+        jdoTemplate.execute(new JdoCallback<Long>() {
+            @Override
+            public Long doInJdo(PersistenceManager pm) throws JDOException {
+                Query query = pm.newQuery(clazz);
+                long deleteCount = query.deletePersistentAll();
+                return Long.valueOf(deleteCount);
+            }
+        });
     }
 
     @Override
@@ -75,7 +80,23 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
         jdoTemplate.flush();
     }
 
-    protected <T extends Model> Key createKey(final Class<T> clazz, final Long id) {
-        return KeyFactory.createKey(ClassUtils.getQualifiedName(clazz), id.longValue());
+    @Override
+    public <T extends Model> void remove(Collection<T> entities) {
+        for (T entity : entities) {
+            remove(entity);
+        }
+    }
+
+    @Override
+    public <T extends Model> void removeByNamedQuery(final Class<T> clazz, final String namedQuery, final Map<String, Object> parameters) {
+        jdoTemplate.execute(new JdoCallback<Long>() {
+            @Override
+            public Long doInJdo(PersistenceManager pm) throws JDOException {
+                pm.evictAll();
+                Query query = pm.newNamedQuery(clazz, namedQuery);
+                long deleteCount = query.deletePersistentAll(parameters);
+                return Long.valueOf(deleteCount);
+            }
+        });
     }
 }

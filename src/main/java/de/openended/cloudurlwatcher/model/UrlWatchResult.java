@@ -17,7 +17,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
-@Queries({ @Query(name = "findByUrl", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult uwr where uwr.url == :url") })
+@Queries({
+        @Query(name = "findByUrl", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE url == :url"),
+        @Query(name = "findAfterTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp > :afterTimestamp"),
+        @Query(name = "findBeforeTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp < :beforeTimestamp"),
+        @Query(name = "findBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp > :afterTimestamp AND timestamp < :beforeTimestamp") })
 public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
 
     private static final long serialVersionUID = 799651060422411138L;

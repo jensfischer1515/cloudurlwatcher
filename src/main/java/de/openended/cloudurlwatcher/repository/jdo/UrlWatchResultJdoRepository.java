@@ -29,11 +29,7 @@ public class UrlWatchResultJdoRepository extends AbstractJdoRepository implement
 
             protected UrlWatchResultAggregate extractAggregate(final String url, Object[] results) {
                 UrlWatchResultAggregate aggregate = new UrlWatchResultAggregate();
-                aggregate.url = url;
-                aggregate.count = (Long) results[0];
-                aggregate.minResponseTime = (Long) results[1];
-                aggregate.maxResponseTime = (Long) results[2];
-                aggregate.avgResponseTime = (Double) results[3];
+
                 return aggregate;
             }
         });

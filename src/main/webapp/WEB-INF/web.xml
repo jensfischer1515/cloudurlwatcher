@@ -74,6 +74,19 @@
 
   <security-constraint>
     <web-resource-collection>
+      <web-resource-name>Profile</web-resource-name>
+      <url-pattern>/profile/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>*</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
       <web-resource-name>Queues</web-resource-name>
       <url-pattern>/queue/*</url-pattern>
       <url-pattern>/_ah/queue/*</url-pattern>
@@ -81,6 +94,9 @@
     <auth-constraint>
       <role-name>admin</role-name>
     </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
   </security-constraint>
 
   <security-constraint>
@@ -91,5 +107,8 @@
     <auth-constraint>
       <role-name>admin</role-name>
     </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
   </security-constraint>
 </web-app>
