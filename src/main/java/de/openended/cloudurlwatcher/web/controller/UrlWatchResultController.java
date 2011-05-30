@@ -1,8 +1,11 @@
 package de.openended.cloudurlwatcher.web.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import de.openended.cloudurlwatcher.repository.GenericRepository;
 public class UrlWatchResultController {
 
     private static final String REDIRECT_AFTER_DELETE = "redirect:/api/UrlWatchResults.json";
+
     @Autowired
     private GenericRepository repository;
 
@@ -29,9 +33,16 @@ public class UrlWatchResultController {
         return Arrays.asList(statusCodes);
     }
 
+    protected Collection<UrlWatchResult> sort(final Collection<UrlWatchResult> original) {
+        List<UrlWatchResult> entities = new ArrayList<UrlWatchResult>(original);
+        Collections.sort(entities, Collections.reverseOrder());
+        return entities;
+    }
+
     @RequestMapping(value = { "/UrlWatchResults" }, method = RequestMethod.GET)
     public Collection<UrlWatchResult> findAll(ModelMap modelMap) {
-        return repository.findAll(UrlWatchResult.class);
+        Collection<UrlWatchResult> entities = repository.findAll(UrlWatchResult.class);
+        return sort(entities);
     }
 
     @RequestMapping(value = { "/UrlWatchResult/{id}" }, method = RequestMethod.GET)
@@ -43,7 +54,8 @@ public class UrlWatchResultController {
     public Collection<UrlWatchResult> findAfterTimestamp(@PathVariable Long afterTimestamp) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("afterTimestamp", afterTimestamp);
-        return repository.findByNamedQuery(UrlWatchResult.class, "findAfterTimestamp", parameters);
+        Collection<UrlWatchResult> entities = repository.findByNamedQuery(UrlWatchResult.class, "findAfterTimestamp", parameters);
+        return sort(entities);
     }
 
     @RequestMapping(value = { "/UrlWatchResults" }, method = RequestMethod.DELETE)
