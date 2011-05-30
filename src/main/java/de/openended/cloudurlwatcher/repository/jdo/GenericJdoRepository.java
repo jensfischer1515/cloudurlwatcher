@@ -10,6 +10,7 @@ import javax.jdo.Query;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.jdo.JdoCallback;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.openended.cloudurlwatcher.model.Model;
@@ -22,8 +23,13 @@ import de.openended.cloudurlwatcher.repository.GenericRepository;
  * @author jfischer
  */
 @Repository
-@Transactional(readOnly = false)
 public class GenericJdoRepository extends AbstractJdoRepository implements GenericRepository {
+
+    @Override
+    @Transactional(readOnly = true)
+    public <T extends Model> Collection<T> findAll(final Class<T> clazz) {
+        return jdoTemplate.detachCopyAll(jdoTemplate.find(clazz));
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -37,8 +43,27 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
 
     @Override
     @Transactional(readOnly = true)
-    public <T extends Model> Collection<T> findAll(final Class<T> clazz) {
-        return jdoTemplate.detachCopyAll(jdoTemplate.find(clazz));
+    public <T extends Model> Collection<T> findByNamedQuery(final Class<T> clazz, final String namedQuery,
+            final Map<String, Object> parameters) {
+        return jdoTemplate.findByNamedQuery(clazz, namedQuery, parameters);
+    }
+
+    @Override
+    @Transactional
+    public void flush() {
+        jdoTemplate.flush();
+    }
+
+    /**
+     * Notice that each root entity belongs to a separate entity group, so a
+     * single transaction cannot create or operate on more than one root entity.
+     */
+    @Override
+    @Transactional(propagation = Propagation.NEVER)
+    public <T extends Model> void remove(Collection<T> entities) {
+        for (T entity : entities) {
+            remove(entity);
+        }
     }
 
     @Override
@@ -49,7 +74,12 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
         jdoTemplate.deletePersistent(persistentEntity);
     }
 
+    /**
+     * Notice that each root entity belongs to a separate entity group, so a
+     * single transaction cannot create or operate on more than one root entity.
+     */
     @Override
+    @Transactional(propagation = Propagation.NEVER)
     public <T extends Model> void removeAll(final Class<T> clazz) {
         jdoTemplate.execute(new JdoCallback<Long>() {
             @Override
@@ -61,42 +91,28 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
         });
     }
 
+    /**
+     * Notice that each root entity belongs to a separate entity group, so a
+     * single transaction cannot create or operate on more than one root entity.
+     */
     @Override
-    @Transactional(readOnly = true)
-    public <T extends Model> Collection<T> findByNamedQuery(final Class<T> clazz, final String namedQuery,
-            final Map<String, Object> parameters) {
-        return jdoTemplate.findByNamedQuery(clazz, namedQuery, parameters);
-    }
-
-    @Override
-    @Transactional
-    public <T extends Model> T save(final T entity) {
-        return jdoTemplate.makePersistent(entity);
-    }
-
-    @Override
-    @Transactional
-    public void flush() {
-        jdoTemplate.flush();
-    }
-
-    @Override
-    public <T extends Model> void remove(Collection<T> entities) {
-        for (T entity : entities) {
-            remove(entity);
-        }
-    }
-
-    @Override
+    @Transactional(propagation = Propagation.NEVER)
     public <T extends Model> void removeByNamedQuery(final Class<T> clazz, final String namedQuery, final Map<String, Object> parameters) {
         jdoTemplate.execute(new JdoCallback<Long>() {
             @Override
             public Long doInJdo(PersistenceManager pm) throws JDOException {
                 pm.evictAll();
                 Query query = pm.newNamedQuery(clazz, namedQuery);
+                query.setOrdering(null);
                 long deleteCount = query.deletePersistentAll(parameters);
                 return Long.valueOf(deleteCount);
             }
         });
+    }
+
+    @Override
+    @Transactional
+    public <T extends Model> T save(final T entity) {
+        return jdoTemplate.makePersistent(entity);
     }
 }

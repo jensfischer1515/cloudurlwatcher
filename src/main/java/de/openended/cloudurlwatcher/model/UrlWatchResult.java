@@ -18,10 +18,10 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 @Queries({
-        @Query(name = "findByUrl", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE url == :url"),
-        @Query(name = "findAfterTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp > :afterTimestamp"),
-        @Query(name = "findBeforeTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp < :beforeTimestamp"),
-        @Query(name = "findBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp > :afterTimestamp AND timestamp < :beforeTimestamp") })
+        @Query(name = "findByUrl", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE url == :url ORDER BY timestamp DESC"),
+        @Query(name = "findAfterTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp > :afterTimestamp ORDER BY timestamp DESC"),
+        @Query(name = "findBeforeTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp < :beforeTimestamp ORDER BY timestamp DESC"),
+        @Query(name = "findBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.model.UrlWatchResult WHERE timestamp > :afterTimestamp AND timestamp < :beforeTimestamp ORDER BY timestamp DESC") })
 public class UrlWatchResult implements Comparable<UrlWatchResult>, Model {
 
     private static final long serialVersionUID = 799651060422411138L;
