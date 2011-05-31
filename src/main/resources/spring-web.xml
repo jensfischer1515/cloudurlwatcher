@@ -6,6 +6,12 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
+  <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+    <constructor-arg>
+      <bean id="connectionManager" class="org.esxx.js.protocol.GAEConnectionManager" />
+    </constructor-arg>
+  </bean>
+
   <mvc:annotation-driven />
 
   <mvc:interceptors>

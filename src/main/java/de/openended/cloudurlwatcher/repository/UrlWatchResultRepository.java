@@ -1,10 +1,10 @@
 package de.openended.cloudurlwatcher.repository;
 
-import de.openended.cloudurlwatcher.model.UrlWatchResultAggregate;
+import de.openended.cloudurlwatcher.entity.UrlWatchResultAggregation;
 
 public interface UrlWatchResultRepository {
 
-    UrlWatchResultAggregate findAllAggregates();
+    UrlWatchResultAggregation findAllAggregates();
 
-    UrlWatchResultAggregate findAggregateByUrl(String url);
+    UrlWatchResultAggregation findAggregateByUrl(String url);
 }

@@ -8,7 +8,7 @@ import org.springframework.orm.jdo.JdoCallback;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.openended.cloudurlwatcher.model.UrlWatchResultAggregate;
+import de.openended.cloudurlwatcher.entity.UrlWatchResultAggregation;
 import de.openended.cloudurlwatcher.repository.UrlWatchResultRepository;
 
 @Repository
@@ -16,19 +16,19 @@ import de.openended.cloudurlwatcher.repository.UrlWatchResultRepository;
 public class UrlWatchResultJdoRepository extends AbstractJdoRepository implements UrlWatchResultRepository {
 
     @Override
-    public UrlWatchResultAggregate findAggregateByUrl(final String url) {
-        UrlWatchResultAggregate result = jdoTemplate.execute(new JdoCallback<UrlWatchResultAggregate>() {
+    public UrlWatchResultAggregation findAggregateByUrl(final String url) {
+        UrlWatchResultAggregation result = jdoTemplate.execute(new JdoCallback<UrlWatchResultAggregation>() {
             @Override
-            public UrlWatchResultAggregate doInJdo(PersistenceManager pm) throws JDOException {
-                String jdoql = "select count(id), min(responseTimeMillis), max(responseTimeMillis), avg(responseTimeMillis) from de.openended.cloudurlwatcher.model.UrlWatchResult where url == :url";
+            public UrlWatchResultAggregation doInJdo(PersistenceManager pm) throws JDOException {
+                String jdoql = "select count(id), min(responseTimeMillis), max(responseTimeMillis), avg(responseTimeMillis) from de.openended.cloudurlwatcher.entity.UrlWatchResult where url == :url";
                 Query query = pm.newQuery(jdoql);
                 Object[] results = (Object[]) query.execute();
-                UrlWatchResultAggregate aggregate = extractAggregate(url, results);
+                UrlWatchResultAggregation aggregate = extractAggregate(url, results);
                 return aggregate;
             }
 
-            protected UrlWatchResultAggregate extractAggregate(final String url, Object[] results) {
-                UrlWatchResultAggregate aggregate = new UrlWatchResultAggregate();
+            protected UrlWatchResultAggregation extractAggregate(final String url, Object[] results) {
+                UrlWatchResultAggregation aggregate = new UrlWatchResultAggregation(url);
 
                 return aggregate;
             }
@@ -37,7 +37,7 @@ public class UrlWatchResultJdoRepository extends AbstractJdoRepository implement
     }
 
     @Override
-    public UrlWatchResultAggregate findAllAggregates() {
+    public UrlWatchResultAggregation findAllAggregates() {
         // TODO Auto-generated method stub
         return null;
     }

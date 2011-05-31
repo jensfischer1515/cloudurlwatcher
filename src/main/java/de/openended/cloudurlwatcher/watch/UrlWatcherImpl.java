@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
-import de.openended.cloudurlwatcher.model.UrlWatchResult;
+import de.openended.cloudurlwatcher.entity.UrlWatchResult;
 
 @Component
 public class UrlWatcherImpl implements UrlWatcher {

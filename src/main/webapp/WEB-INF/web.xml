@@ -2,15 +2,21 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
-  <display-name>cloudurlwatcher</display-name>
+  <display-name>>${project.name}</display-name>
   <description></description>
 
   <distributable />
 
   <context-param>
-    <description>Testing</description>
-    <param-name>context-param-name</param-name>
-    <param-value>context-param-value</param-value>
+    <description>Name of the Google App Engine application</description>
+    <param-name>gae.application.name</param-name>
+    <param-value>${project.name}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Version of the Google App Engine application</description>
+    <param-name>gae.application.version</param-name>
+    <param-value>${gae.application.version}</param-value>
   </context-param>
 
   <servlet>

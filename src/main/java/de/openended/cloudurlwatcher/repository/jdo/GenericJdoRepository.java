@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.openended.cloudurlwatcher.model.Model;
+import de.openended.cloudurlwatcher.entity.Entity;
 import de.openended.cloudurlwatcher.repository.GenericRepository;
 
 /**
@@ -27,13 +27,13 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
 
     @Override
     @Transactional(readOnly = true)
-    public <T extends Model> Collection<T> findAll(final Class<T> clazz) {
+    public <T extends Entity> Collection<T> findAll(final Class<T> clazz) {
         return jdoTemplate.detachCopyAll(jdoTemplate.find(clazz));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public <T extends Model> T findById(final Class<T> clazz, final Long id) {
+    public <T extends Entity> T findById(final Class<T> clazz, final Long id) {
         T entity = jdoTemplate.getObjectById(clazz, id);
         if (entity == null) {
             throw new ObjectRetrievalFailureException(clazz, id);
@@ -43,7 +43,7 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
 
     @Override
     @Transactional(readOnly = true)
-    public <T extends Model> Collection<T> findByNamedQuery(final Class<T> clazz, final String namedQuery,
+    public <T extends Entity> Collection<T> findByNamedQuery(final Class<T> clazz, final String namedQuery,
             final Map<String, Object> parameters) {
         return jdoTemplate.findByNamedQuery(clazz, namedQuery, parameters);
     }
@@ -60,7 +60,7 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
      */
     @Override
     @Transactional(propagation = Propagation.NEVER)
-    public <T extends Model> void remove(Collection<T> entities) {
+    public <T extends Entity> void remove(Collection<T> entities) {
         for (T entity : entities) {
             remove(entity);
         }
@@ -69,7 +69,7 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
     @Override
     @Transactional
     @SuppressWarnings("unchecked")
-    public <T extends Model> void remove(final T entity) {
+    public <T extends Entity> void remove(final T entity) {
         T persistentEntity = (T) jdoTemplate.getObjectById(entity.getClass(), entity.getId());
         jdoTemplate.deletePersistent(persistentEntity);
     }
@@ -80,7 +80,7 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
      */
     @Override
     @Transactional(propagation = Propagation.NEVER)
-    public <T extends Model> void removeAll(final Class<T> clazz) {
+    public <T extends Entity> void removeAll(final Class<T> clazz) {
         jdoTemplate.execute(new JdoCallback<Long>() {
             @Override
             public Long doInJdo(PersistenceManager pm) throws JDOException {
@@ -97,7 +97,7 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
      */
     @Override
     @Transactional(propagation = Propagation.NEVER)
-    public <T extends Model> void removeByNamedQuery(final Class<T> clazz, final String namedQuery, final Map<String, Object> parameters) {
+    public <T extends Entity> void removeByNamedQuery(final Class<T> clazz, final String namedQuery, final Map<String, Object> parameters) {
         jdoTemplate.execute(new JdoCallback<Long>() {
             @Override
             public Long doInJdo(PersistenceManager pm) throws JDOException {
@@ -112,7 +112,7 @@ public class GenericJdoRepository extends AbstractJdoRepository implements Gener
 
     @Override
     @Transactional
-    public <T extends Model> T save(final T entity) {
+    public <T extends Entity> T save(final T entity) {
         return jdoTemplate.makePersistent(entity);
     }
 }

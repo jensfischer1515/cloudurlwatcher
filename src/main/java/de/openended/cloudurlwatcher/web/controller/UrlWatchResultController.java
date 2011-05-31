@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import de.openended.cloudurlwatcher.model.UrlWatchResult;
+import de.openended.cloudurlwatcher.entity.UrlWatchResult;
 import de.openended.cloudurlwatcher.repository.GenericRepository;
 
 @Controller

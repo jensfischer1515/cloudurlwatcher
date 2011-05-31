@@ -7,6 +7,36 @@
   </queue>
 
   <queue>
+    <name>MINUTELY</name>
+    <rate>5/s</rate>
+  </queue>
+
+  <queue>
+    <name>HOURLY</name>
+    <rate>5/s</rate>
+  </queue>
+
+  <queue>
+    <name>DAILY</name>
+    <rate>5/s</rate>
+  </queue>
+
+  <queue>
+    <name>WEEKLY</name>
+    <rate>5/s</rate>
+  </queue>
+
+  <queue>
+    <name>MONTHLY</name>
+    <rate>5/s</rate>
+  </queue>
+
+  <queue>
+    <name>YEARLY</name>
+    <rate>5/s</rate>
+  </queue>
+
+  <queue>
     <name>optimize-queue</name>
     <rate>20/s</rate>
     <bucket-size>40</bucket-size>
