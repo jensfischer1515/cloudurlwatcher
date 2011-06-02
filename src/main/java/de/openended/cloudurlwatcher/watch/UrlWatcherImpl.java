@@ -7,6 +7,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,6 +50,8 @@ public class UrlWatcherImpl implements UrlWatcher {
         HttpGet method = new HttpGet(url);
         method.removeHeaders(HTTP.USER_AGENT);
         method.addHeader(HTTP.USER_AGENT, userAgent);
+        // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/statemgmt.html#d4e798
+        method.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
         return method;
     }
 

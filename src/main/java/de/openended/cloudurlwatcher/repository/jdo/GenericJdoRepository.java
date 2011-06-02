@@ -19,6 +19,8 @@ import de.openended.cloudurlwatcher.repository.GenericRepository;
 /**
  * http://agilewombat.blogspot.com/2009/12/spring-jdo-and-google-app-engine.html
  * 
+ * gql: SELECT * FROM __Stat_Kind__
+ * 
  * @author Lionel Port
  * @author jfischer
  */

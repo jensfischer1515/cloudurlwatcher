@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
 
 @Controller
+@RequestMapping(value = { "/admin" })
 public class ServletContextParamController implements ServletContextAware {
 
     private ServletContext servletContext;

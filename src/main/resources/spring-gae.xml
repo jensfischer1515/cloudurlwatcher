@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+  <bean id="datastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getDatastoreService" />
+
+  <bean id="asyncDatastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getAsyncDatastoreService" />
+
+  <bean id="blobstoreService" class="com.google.appengine.api.blobstore.BlobstoreServiceFactory" factory-method="getBlobstoreService" />
+
+  <bean id="capabilitiesService" class="com.google.appengine.api.capabilities.CapabilitiesServiceFactory" factory-method="getCapabilitiesService" />
+
+  <bean id="channelService" class="com.google.appengine.api.channel.ChannelServiceFactory" factory-method="getChannelService" />
+
+  <bean id="fileService" class="com.google.appengine.api.files.FileServiceFactory" factory-method="getFileService" />
+
+  <bean id="imagesService" class="com.google.appengine.api.images.ImagesServiceFactory" factory-method="getImagesService" />
+
+  <bean id="mailService" class="com.google.appengine.api.mail.MailServiceFactory" factory-method="getMailService" />
+
+  <bean id="memcacheService" class="com.google.appengine.api.memcache.MemcacheServiceFactory" factory-method="getMemcacheService">
+    <constructor-arg value="UserCache">
+      <description>Forces the use of namespace for all operations in MemcacheService</description>
+    </constructor-arg>
+  </bean>
+
+  <bean id="oAuthService" class="com.google.appengine.api.oauth.OAuthServiceFactory" factory-method="getOAuthService" />
+
+  <bean id="quotaService" class="com.google.appengine.api.quota.QuotaServiceFactory" factory-method="getQuotaService" />
+
+  <bean id="defaultQueue" class="com.google.appengine.api.taskqueue.QueueFactory" factory-method="getDefaultQueue" />
+
+  <bean id="urlFetchService" class="com.google.appengine.api.urlfetch.URLFetchServiceFactory" factory-method="getURLFetchService" />
+
+  <bean id="userService" class="com.google.appengine.api.users.UserServiceFactory" factory-method="getUserService" />
+
+  <bean id="xmppService" class="com.google.appengine.api.xmpp.XMPPServiceFactory" factory-method="getXMPPService" />
+</beans>

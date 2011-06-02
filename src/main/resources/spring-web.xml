@@ -6,12 +6,6 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-  <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
-    <constructor-arg>
-      <bean id="connectionManager" class="org.esxx.js.protocol.GAEConnectionManager" />
-    </constructor-arg>
-  </bean>
-
   <mvc:annotation-driven />
 
   <mvc:interceptors>
@@ -21,6 +15,9 @@
   <mvc:resources mapping="/images/**" location="/images/" cache-period="31556926" />
   <mvc:resources mapping="/styles/**" location="/styles/" cache-period="31556926" />
   <mvc:resources mapping="/scripts/**" location="/scripts/" cache-period="31556926" />
+  <mvc:resources mapping="/favicon.ico" location="/favicon.ico" cache-period="31556926" />
+  <mvc:resources mapping="/robots.txt" location="/robots.txt" cache-period="31556926" />
+  <mvc:resources mapping="/crossdomain.xml" location="/crossdomain.xml" cache-period="31556926" />
 
   <mvc:view-controller path="/" view-name="index" />
   <mvc:view-controller path="/error/404" view-name="/error/404" />
@@ -29,8 +26,17 @@
 
   <!--mvc:default-servlet-handler / -->
 
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+    <property name="cookieName" value="LOCALE" />
+    <property name="cookieMaxAge" value="86400" />
+    <property name="defaultLocale" value="en_US" />
+  </bean>
 
-  <!--bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"> <property name="exceptionAttribute" 
-    value="exception" /> </bean -->
-
+  <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionAttribute" value="exception" />
+    <property name="defaultErrorView" value="error" />
+    <property name="defaultStatusCode" value="500" />
+    <property name="preventResponseCaching" value="true" />
+    <property name="warnLogCategory" value="de.openended.cloudurlwatcher" />
+  </bean>
 </beans>

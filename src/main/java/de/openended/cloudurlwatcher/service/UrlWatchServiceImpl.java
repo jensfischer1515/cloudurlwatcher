@@ -31,10 +31,10 @@ public class UrlWatchServiceImpl implements UrlWatchService {
     @Override
     public UrlWatchResult watchUrl(String url) {
         try {
-            UrlWatchResult result = urlWatcher.watchUrl(url);
-            result = repository.save(result);
-            logger.info("Saved model with id {}", result.getId());
-            return result;
+            UrlWatchResult entity = urlWatcher.watchUrl(url);
+            entity = repository.save(entity);
+            logger.info("Saved entity with id {}", entity.getId());
+            return entity;
         } catch (IOException e) {
             throw new ServiceException(e);
         }

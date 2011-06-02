@@ -3,22 +3,53 @@
   <application>${project.name}</application>
   <version>${gae.application.version}</version>
 
+  <threadsafe>true</threadsafe>
+  <ssl-enabled>true</ssl-enabled>
+  <sessions-enabled>true</sessions-enabled>
+  <warmup-requests-enabled>true</warmup-requests-enabled>
+
+  <static-files>
+    <include path="**" expiration="7d" />
+    <exclude path="/META-INF/**" />
+    <exclude path="/WEB-INF/**" />
+  </static-files>
+
+  <resource-files>
+    <exclude path="/images/**" />
+    <exclude path="/styles/**" />
+    <exclude path="/scripts/**" />
+    <exclude path="/favicon.ico" />
+    <exclude path="/robots.txt" />
+    <exclude path="/crossdomain.xml" />
+  </resource-files>
+
+  <admin-console>
+    <page name="Admin" url="/admin/contextParams" />
+    <page name="Appstats" url="/appstats/stats" />
+  </admin-console>
+
+  <static-error-handlers>
+    <handler file="/static/error.html" />
+    <handler file="/static/over_quota.html" error-code="over_quota" />
+    <handler file="/static/dos_api_denial.html" error-code="dos_api_denial" />
+    <handler file="/static/timeout.html" error-code="timeout" />
+  </static-error-handlers>
+
   <system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/classes/logging.properties" />
     <property name="gae.application.name" value="${project.name}" />
     <property name="gae.application.version" value="${gae.application.version}" />
   </system-properties>
 
-
-  <!--env-variables> <env-var name="DEFAULT_ENCODING" value="UTF-8" /> </env-variables -->
+  <env-variables>
+    <env-var name="DEFAULT_ENCODING" value="UTF-8" />
+  </env-variables>
 
   <inbound-services>
-    <service>xmpp_message</service>
-    <!-- http://code.google.com/intl/de-DE/appengine/docs/java/mail/overview.html#Receiving_Mail -->
+    <service>warmup</service>
     <service>mail</service>
+    <service>xmpp_message</service>
+    <service>xmpp_presence</service>
+    <service>xmpp_subscribe</service>
   </inbound-services>
-
-  <threadsafe>true</threadsafe>
-  <ssl-enabled>true</ssl-enabled>
-  <sessions-enabled>true</sessions-enabled>
 </appengine-web-app>
