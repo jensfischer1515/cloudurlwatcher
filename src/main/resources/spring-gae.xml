@@ -3,37 +3,41 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-  <bean id="datastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getDatastoreService" />
+  <bean id="datastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getDatastoreService" lazy-init="false" />
 
-  <bean id="asyncDatastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getAsyncDatastoreService" />
+  <bean id="asyncDatastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getAsyncDatastoreService" lazy-init="false" />
 
-  <bean id="blobstoreService" class="com.google.appengine.api.blobstore.BlobstoreServiceFactory" factory-method="getBlobstoreService" />
+  <bean id="blobstoreService" class="com.google.appengine.api.blobstore.BlobstoreServiceFactory" factory-method="getBlobstoreService" lazy-init="false" />
 
-  <bean id="capabilitiesService" class="com.google.appengine.api.capabilities.CapabilitiesServiceFactory" factory-method="getCapabilitiesService" />
+  <bean id="capabilitiesService" class="com.google.appengine.api.capabilities.CapabilitiesServiceFactory" factory-method="getCapabilitiesService"
+    lazy-init="false" />
 
-  <bean id="channelService" class="com.google.appengine.api.channel.ChannelServiceFactory" factory-method="getChannelService" />
+  <bean id="channelService" class="com.google.appengine.api.channel.ChannelServiceFactory" factory-method="getChannelService" lazy-init="false" />
 
-  <bean id="fileService" class="com.google.appengine.api.files.FileServiceFactory" factory-method="getFileService" />
+  <bean id="fileService" class="com.google.appengine.api.files.FileServiceFactory" factory-method="getFileService" lazy-init="false" />
 
-  <bean id="imagesService" class="com.google.appengine.api.images.ImagesServiceFactory" factory-method="getImagesService" />
+  <bean id="imagesService" class="com.google.appengine.api.images.ImagesServiceFactory" factory-method="getImagesService" lazy-init="false" />
+  <bean id="imagesService.horizontalFlip" class="com.google.appengine.api.images.ImagesServiceFactory" factory-method="makeHorizontalFlip" lazy-init="false" />
+  <bean id="imagesService.verticalFlip" class="com.google.appengine.api.images.ImagesServiceFactory" factory-method="makeVerticalFlip" lazy-init="false" />
+  <bean id="imagesService.imFeelingLucky" class="com.google.appengine.api.images.ImagesServiceFactory" factory-method="makeImFeelingLucky" lazy-init="false" />
 
-  <bean id="mailService" class="com.google.appengine.api.mail.MailServiceFactory" factory-method="getMailService" />
+  <bean id="mailService" class="com.google.appengine.api.mail.MailServiceFactory" factory-method="getMailService" lazy-init="false" />
 
-  <bean id="memcacheService" class="com.google.appengine.api.memcache.MemcacheServiceFactory" factory-method="getMemcacheService">
+  <bean id="memcacheService" class="com.google.appengine.api.memcache.MemcacheServiceFactory" factory-method="getMemcacheService" lazy-init="false">
     <constructor-arg value="UserCache">
       <description>Forces the use of namespace for all operations in MemcacheService</description>
     </constructor-arg>
   </bean>
 
-  <bean id="oAuthService" class="com.google.appengine.api.oauth.OAuthServiceFactory" factory-method="getOAuthService" />
+  <bean id="oAuthService" class="com.google.appengine.api.oauth.OAuthServiceFactory" factory-method="getOAuthService" lazy-init="false" />
 
-  <bean id="quotaService" class="com.google.appengine.api.quota.QuotaServiceFactory" factory-method="getQuotaService" />
+  <bean id="quotaService" class="com.google.appengine.api.quota.QuotaServiceFactory" factory-method="getQuotaService" lazy-init="false" />
 
-  <bean id="defaultQueue" class="com.google.appengine.api.taskqueue.QueueFactory" factory-method="getDefaultQueue" />
+  <bean id="defaultQueue" class="com.google.appengine.api.taskqueue.QueueFactory" factory-method="getDefaultQueue" lazy-init="false" />
 
-  <bean id="urlFetchService" class="com.google.appengine.api.urlfetch.URLFetchServiceFactory" factory-method="getURLFetchService" />
+  <bean id="urlFetchService" class="com.google.appengine.api.urlfetch.URLFetchServiceFactory" factory-method="getURLFetchService" lazy-init="false" />
 
-  <bean id="userService" class="com.google.appengine.api.users.UserServiceFactory" factory-method="getUserService" />
+  <bean id="userService" class="com.google.appengine.api.users.UserServiceFactory" factory-method="getUserService" lazy-init="false" />
 
-  <bean id="xmppService" class="com.google.appengine.api.xmpp.XMPPServiceFactory" factory-method="getXMPPService" />
+  <bean id="xmppService" class="com.google.appengine.api.xmpp.XMPPServiceFactory" factory-method="getXMPPService" lazy-init="false" />
 </beans>

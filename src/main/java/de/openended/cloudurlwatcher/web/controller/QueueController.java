@@ -1,6 +1,5 @@
 package de.openended.cloudurlwatcher.web.controller;
 
-import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.openended.cloudurlwatcher.entity.UrlWatchResult;
+import de.openended.cloudurlwatcher.service.Headers;
 import de.openended.cloudurlwatcher.service.UrlWatchService;
 
 /**
@@ -30,75 +31,36 @@ public class QueueController {
     @Autowired
     private UrlWatchService urlWatchService;
 
-    @RequestMapping(value = { "/MINUTELY" })
+    @RequestMapping(value = { "/watchUrl" })
     @ResponseBody
-    public String executeQueueTaskMinutely(@RequestHeader(value = CronJobController.HEADER_URL, required = true) String url,
-            @RequestHeader(value = "X-AppEngine-QueueName", required = false) String queueName,
-            @RequestHeader(value = "X-AppEngine-TaskName", required = false) String taskName,
-            @RequestHeader(value = "X-AppEngine-TaskRetryCount", required = false) String taskRetryCount,
-            @RequestHeader(value = "X-AppEngine-FailFast", required = false) String failFast) {
-        logger.info("Watching URL '{}'", url);
-        urlWatchService.watchUrl(url);
+    public String watchUrl(@RequestHeader(value = Headers.WATCH_URL, required = true) String watchUrl,
+            @RequestHeader(value = Headers.QUEUE_NAME, required = false) String queueName,
+            @RequestHeader(value = Headers.TASK_NAME, required = false) String taskName,
+            @RequestHeader(value = Headers.TASK_RETRY_COUNT, required = false) String taskRetryCount,
+            @RequestHeader(value = Headers.FAIL_FAST, required = false) String failFast) {
+        logger.info("Watching URL '{}'", watchUrl);
+        UrlWatchResult result = urlWatchService.watchUrl(watchUrl);
         return String.format("Executed task '%s' from queue '%s'", taskName, queueName);
     }
 
-    @RequestMapping(value = { "/HOURLY" })
+    @RequestMapping(value = { "/aggregateUrl" })
     @ResponseBody
-    public String executeQueueTaskHourly(@RequestHeader(value = CronJobController.HEADER_URL, required = true) String url,
-            @RequestHeader(value = "X-AppEngine-QueueName", required = false) String queueName,
-            @RequestHeader(value = "X-AppEngine-TaskName", required = false) String taskName,
-            @RequestHeader(value = "X-AppEngine-TaskRetryCount", required = false) String taskRetryCount,
-            @RequestHeader(value = "X-AppEngine-FailFast", required = false) String failFast) {
-        logger.info("Watching URL '{}'", url);
-        DateTime end = new DateTime();
-        DateTime start = end.minusHours(1);
-        Interval interval = new Interval(start, end);
+    public String aggregateUrl(@RequestHeader(value = Headers.WATCH_URL, required = true) String watchUrl,
+            @RequestHeader(value = Headers.WATCH_AGGREGATION, required = true) String watchAggregation,
+            @RequestHeader(value = Headers.WATCH_AGGREGATE_FROM, required = true) long watchAggregateFrom,
+            @RequestHeader(value = Headers.WATCH_AGGREGATE_TO, required = true) long watchAggregateTo,
+            @RequestHeader(value = Headers.QUEUE_NAME, required = false) String queueName,
+            @RequestHeader(value = Headers.TASK_NAME, required = false) String taskName,
+            @RequestHeader(value = Headers.TASK_RETRY_COUNT, required = false) String taskRetryCount,
+            @RequestHeader(value = Headers.FAIL_FAST, required = false) String failFast) {
+        logger.info("Aggregating URL '{}' for {} between {} and {}", new Object[] { watchUrl, watchAggregation, watchAggregateFrom,
+                watchAggregateTo });
+
+        Interval interval = new Interval(watchAggregateFrom, watchAggregateTo);
+
         // urlWatchService.aggregateUrlWatchResults(url, interval,
         // Schedule.HOURLY);
         return String.format("Executed task '%s' from queue '%s'", taskName, queueName);
     }
 
-    @RequestMapping(value = { "/DAILY" })
-    @ResponseBody
-    public String executeQueueTaskDaily(@RequestHeader(value = CronJobController.HEADER_URL, required = true) String url,
-            @RequestHeader(value = "X-AppEngine-QueueName", required = false) String queueName,
-            @RequestHeader(value = "X-AppEngine-TaskName", required = false) String taskName,
-            @RequestHeader(value = "X-AppEngine-TaskRetryCount", required = false) String taskRetryCount,
-            @RequestHeader(value = "X-AppEngine-FailFast", required = false) String failFast) {
-        logger.info("Watching URL '{}'", url);
-        return String.format("Executed task '%s' from queue '%s'", taskName, queueName);
-    }
-
-    @RequestMapping(value = { "/WEEKLY" })
-    @ResponseBody
-    public String executeQueueTaskWeekly(@RequestHeader(value = CronJobController.HEADER_URL, required = true) String url,
-            @RequestHeader(value = "X-AppEngine-QueueName", required = false) String queueName,
-            @RequestHeader(value = "X-AppEngine-TaskName", required = false) String taskName,
-            @RequestHeader(value = "X-AppEngine-TaskRetryCount", required = false) String taskRetryCount,
-            @RequestHeader(value = "X-AppEngine-FailFast", required = false) String failFast) {
-        logger.info("Watching URL '{}'", url);
-        return String.format("Executed task '%s' from queue '%s'", taskName, queueName);
-    }
-
-    @RequestMapping(value = { "/MONTHLY" })
-    @ResponseBody
-    public String executeQueueTaskMonthly(@RequestHeader(value = CronJobController.HEADER_URL, required = true) String url,
-            @RequestHeader(value = "X-AppEngine-QueueName", required = false) String queueName,
-            @RequestHeader(value = "X-AppEngine-TaskName", required = false) String taskName,
-            @RequestHeader(value = "X-AppEngine-TaskRetryCount", required = false) String taskRetryCount,
-            @RequestHeader(value = "X-AppEngine-FailFast", required = false) String failFast) {
-        logger.info("Watching URL '{}'", url);
-        return String.format("Executed task '%s' from queue '%s'", taskName, queueName);
-    }
-
-    @RequestMapping(value = { "/YEARLY" })
-    @ResponseBody
-    public String executeQueueTaskYearly(@RequestHeader(value = CronJobController.HEADER_URL, required = true) String url,
-            @RequestHeader(value = "X-AppEngine-QueueName", required = false) String queueName,
-            @RequestHeader(value = "X-AppEngine-TaskName", required = false) String taskName,
-            @RequestHeader(value = "X-AppEngine-TaskRetryCount", required = false) String taskRetryCount,
-            @RequestHeader(value = "X-AppEngine-FailFast", required = false) String failFast) {
-        logger.info("Watching URL '{}'", url);
-        return String.format("Executed task '%s' from queue '%s'", taskName, queueName);
-    }
 }

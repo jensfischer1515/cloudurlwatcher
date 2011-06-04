@@ -1,6 +1,5 @@
 package de.openended.cloudurlwatcher.service;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,14 +29,9 @@ public class UrlWatchServiceImpl implements UrlWatchService {
 
     @Override
     public UrlWatchResult watchUrl(String url) {
-        try {
-            UrlWatchResult entity = urlWatcher.watchUrl(url);
-            entity = repository.save(entity);
-            logger.info("Saved entity with id {}", entity.getId());
-            return entity;
-        } catch (IOException e) {
-            throw new ServiceException(e);
-        }
+        UrlWatchResult entity = repository.save(urlWatcher.watchUrl(url));
+        logger.info("Saved entity with id {}", entity.getId());
+        return entity;
     }
 
     @Override

@@ -37,11 +37,22 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.scheme.SchemeSocketFactory;
 import org.apache.http.params.HttpParams;
 
+import com.google.appengine.api.urlfetch.URLFetchService;
+
+/**
+ * 
+ * @author Martin Blom <martin@blom.org>
+ * @author jensfischer
+ */
 public class GAEConnectionManager implements ClientConnectionManager {
 
     private SchemeRegistry schemeRegistry;
 
-    public GAEConnectionManager() {
+    private URLFetchService urlFetchService;
+
+    public GAEConnectionManager(URLFetchService urlFetchService) {
+        super();
+        this.urlFetchService = urlFetchService;
         SchemeSocketFactory noSocketFactory = new SchemeSocketFactory() {
 
             @Override
@@ -61,9 +72,9 @@ public class GAEConnectionManager implements ClientConnectionManager {
             }
         };
 
-        schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme("http", 80, noSocketFactory));
-        schemeRegistry.register(new Scheme("https", 443, noSocketFactory));
+        this.schemeRegistry = new SchemeRegistry();
+        this.schemeRegistry.register(new Scheme("http", 80, noSocketFactory));
+        this.schemeRegistry.register(new Scheme("https", 443, noSocketFactory));
     }
 
     @Override
@@ -77,7 +88,7 @@ public class GAEConnectionManager implements ClientConnectionManager {
     }
 
     private ManagedClientConnection getConnection(HttpRoute route, Object state) {
-        return new GAEClientConnection(this, route, state);
+        return new GAEClientConnection(this, route, state, urlFetchService);
     }
 
     @Override

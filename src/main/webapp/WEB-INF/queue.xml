@@ -7,6 +7,18 @@
   </queue>
 
   <queue>
+    <name>watchUrl</name>
+    <rate>20/s</rate>
+    <bucket-size>40</bucket-size>
+    <max-concurrent-requests>10</max-concurrent-requests>
+  </queue>
+
+  <queue>
+    <name>aggregateUrl</name>
+    <rate>5/s</rate>
+  </queue>
+
+  <queue>
     <name>MINUTELY</name>
     <rate>5/s</rate>
   </queue>
@@ -34,12 +46,5 @@
   <queue>
     <name>YEARLY</name>
     <rate>5/s</rate>
-  </queue>
-
-  <queue>
-    <name>optimize-queue</name>
-    <rate>20/s</rate>
-    <bucket-size>40</bucket-size>
-    <max-concurrent-requests>10</max-concurrent-requests>
   </queue>
 </queue-entries>

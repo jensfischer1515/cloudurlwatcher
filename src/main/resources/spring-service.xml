@@ -1,19 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
-  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-    <property name="useCodeAsDefaultMessage" value="true" />
-    <property name="basenames">
-      <list>
-        <value>classpath:messages</value>
-      </list>
-    </property>
-  </bean>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
   <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
     <constructor-arg>
-      <bean id="connectionManager" class="org.esxx.js.protocol.GAEConnectionManager" />
+      <bean class="org.esxx.js.protocol.GAEConnectionManager">
+        <constructor-arg ref="urlFetchService" />
+      </bean>
     </constructor-arg>
   </bean>
+
+  <util:set id="urlsToWatch" value-type="java.lang.String">
+    <value>http://store.apple.com/de</value>
+    <value>http://www.microsoft.com</value>
+    <value>http://www.facebook.com</value>
+  </util:set>
+
+  <bean id="schedule.MINUTELY" class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+    <constructor-arg value="MINUTELY" />
+  </bean>
+  <bean id="schedule.HOURLY" class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+    <constructor-arg value="HOURLY" />
+  </bean>
+  <bean id="schedule.DAILY" class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+    <constructor-arg value="DAILY" />
+  </bean>
+  <bean id="schedule.WEEKLY" class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+    <constructor-arg value="WEEKLY" />
+  </bean>
+  <bean id="schedule.MONTHLY" class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+    <constructor-arg value="MONTHLY" />
+  </bean>
+  <bean id="schedule.YEARLY" class="de.openended.cloudurlwatcher.cron.Schedule" factory-method="valueOf">
+    <constructor-arg value="YEARLY" />
+  </bean>
+
+  <util:map id="scheduleToQueueMapping" key-type="de.openended.cloudurlwatcher.cron.Schedule" value-type="java.lang.String">
+    <entry key-ref="schedule.MINUTELY" value="watchUrl" />
+    <entry key-ref="schedule.HOURLY" value="aggregateUrl" />
+    <entry key-ref="schedule.DAILY" value="aggregateUrl" />
+    <entry key-ref="schedule.WEEKLY" value="aggregateUrl" />
+    <entry key-ref="schedule.MONTHLY" value="aggregateUrl" />
+    <entry key-ref="schedule.YEARLY" value="aggregateUrl" />
+  </util:map>
 </beans>

@@ -52,15 +52,19 @@ import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
-import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
+/**
+ * 
+ * @author Martin Blom <martin@blom.org>
+ * @author jensfischer
+ */
 class GAEClientConnection implements ManagedClientConnection {
 
-    private static URLFetchService urlFS = URLFetchServiceFactory.getURLFetchService();
+    private URLFetchService urlFetchService;
 
     private boolean closed;
 
-    private final ClientConnectionManager connManager;
+    private ClientConnectionManager connectionManager;
 
     private HTTPRequest request;
 
@@ -72,10 +76,13 @@ class GAEClientConnection implements ManagedClientConnection {
 
     private Object state;
 
-    public GAEClientConnection(ClientConnectionManager cm, HttpRoute route, Object state) {
-        this.connManager = cm;
+    public GAEClientConnection(final ClientConnectionManager connectionManager, final HttpRoute route, final Object state,
+            final URLFetchService urlFetchService) {
+        super();
+        this.connectionManager = connectionManager;
         this.route = route;
         this.state = state;
+        this.urlFetchService = urlFetchService;
         this.closed = true;
     }
 
@@ -95,7 +102,7 @@ class GAEClientConnection implements ManagedClientConnection {
     @Override
     public void flush() throws IOException {
         if (request != null) {
-            response = urlFS.fetch(request);
+            response = urlFetchService.fetch(request);
             request = null;
         } else {
             response = null;
@@ -124,8 +131,8 @@ class GAEClientConnection implements ManagedClientConnection {
 
     @Override
     public int getRemotePort() {
-        HttpHost host = route.getTargetHost();
-        return connManager.getSchemeRegistry().getScheme(host).resolvePort(host.getPort());
+        final HttpHost host = route.getTargetHost();
+        return connectionManager.getSchemeRegistry().getScheme(host).resolvePort(host.getPort());
     }
 
     @Override
@@ -159,7 +166,7 @@ class GAEClientConnection implements ManagedClientConnection {
     }
 
     @Override
-    public boolean isResponseAvailable(int timeout) throws IOException {
+    public boolean isResponseAvailable(final int timeout) throws IOException {
         return (response != null);
     }
 
@@ -174,7 +181,7 @@ class GAEClientConnection implements ManagedClientConnection {
     }
 
     @Override
-    public void layerProtocol(HttpContext context, HttpParams params) throws IOException {
+    public void layerProtocol(final HttpContext context, final HttpParams params) throws IOException {
         throw new IOException("layerProtocol() not supported");
     }
 
@@ -184,7 +191,7 @@ class GAEClientConnection implements ManagedClientConnection {
     }
 
     @Override
-    public void open(HttpRoute route, HttpContext context, HttpParams params) throws IOException {
+    public void open(final HttpRoute route, final HttpContext context, final HttpParams params) throws IOException {
         close();
         this.route = route;
     }
@@ -195,7 +202,7 @@ class GAEClientConnection implements ManagedClientConnection {
             throw new IOException("receiveResponseEntity() called on closed connection");
         }
 
-        ByteArrayEntity bae = new ByteArrayEntity(this.response.getContent());
+        final ByteArrayEntity bae = new ByteArrayEntity(this.response.getContent());
         bae.setContentType(response.getFirstHeader("Content-Type"));
         response.setEntity(bae);
 
@@ -208,9 +215,9 @@ class GAEClientConnection implements ManagedClientConnection {
             flush();
         }
 
-        HttpResponse response = new BasicHttpResponse(new ProtocolVersion("HTTP", 1, 1), this.response.getResponseCode(), null);
+        final HttpResponse response = new BasicHttpResponse(new ProtocolVersion("HTTP", 1, 1), this.response.getResponseCode(), null);
 
-        for (HTTPHeader h : this.response.getHeaders()) {
+        for (final HTTPHeader h : this.response.getHeaders()) {
             response.addHeader(h.getName(), h.getValue());
         }
 
@@ -219,12 +226,12 @@ class GAEClientConnection implements ManagedClientConnection {
 
     @Override
     public void releaseConnection() throws IOException {
-        connManager.releaseConnection(this, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        connectionManager.releaseConnection(this, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void sendRequestEntity(HttpEntityEnclosingRequest request) throws HttpException, IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public void sendRequestEntity(final HttpEntityEnclosingRequest request) throws HttpException, IOException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (request.getEntity() != null) {
             request.getEntity().writeTo(baos);
         }
@@ -232,37 +239,37 @@ class GAEClientConnection implements ManagedClientConnection {
     }
 
     @Override
-    public void sendRequestHeader(HttpRequest request) throws HttpException, IOException {
+    public void sendRequestHeader(final HttpRequest request) throws HttpException, IOException {
         try {
-            HttpHost host = route.getTargetHost();
+            final HttpHost host = route.getTargetHost();
 
-            URI uri = new URI(host.getSchemeName() + "://" + host.getHostName() + ((host.getPort() == -1) ? "" : (":" + host.getPort()))
-                    + request.getRequestLine().getUri());
+            final URI uri = new URI(host.getSchemeName() + "://" + host.getHostName()
+                    + ((host.getPort() == -1) ? "" : (":" + host.getPort())) + request.getRequestLine().getUri());
 
             this.request = new HTTPRequest(uri.toURL(), HTTPMethod.valueOf(request.getRequestLine().getMethod()), FetchOptions.Builder
                     .disallowTruncate().doNotFollowRedirects());
-        } catch (URISyntaxException ex) {
+        } catch (final URISyntaxException ex) {
             throw new IOException("Malformed request URI: " + ex.getMessage(), ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (final IllegalArgumentException ex) {
             throw new IOException("Unsupported HTTP method: " + ex.getMessage(), ex);
         }
 
-        for (Header h : request.getAllHeaders()) {
+        for (final Header h : request.getAllHeaders()) {
             this.request.addHeader(new HTTPHeader(h.getName(), h.getValue()));
         }
     }
 
     @Override
-    public void setIdleDuration(long duration, TimeUnit unit) {
+    public void setIdleDuration(final long duration, final TimeUnit unit) {
         // Do nothing
     }
 
     @Override
-    public void setSocketTimeout(int timeout) {
+    public void setSocketTimeout(final int timeout) {
     }
 
     @Override
-    public void setState(Object state) {
+    public void setState(final Object state) {
         this.state = state;
     }
 
@@ -272,12 +279,12 @@ class GAEClientConnection implements ManagedClientConnection {
     }
 
     @Override
-    public void tunnelProxy(HttpHost next, boolean secure, HttpParams params) throws IOException {
+    public void tunnelProxy(final HttpHost next, final boolean secure, final HttpParams params) throws IOException {
         throw new IOException("tunnelProxy() not supported");
     }
 
     @Override
-    public void tunnelTarget(boolean secure, HttpParams params) throws IOException {
+    public void tunnelTarget(final boolean secure, final HttpParams params) throws IOException {
         throw new IOException("tunnelTarget() not supported");
     }
 
