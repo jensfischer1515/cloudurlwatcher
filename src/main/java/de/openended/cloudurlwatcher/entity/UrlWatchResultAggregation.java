@@ -8,6 +8,7 @@ import java.util.List;
 import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -53,11 +54,7 @@ public class UrlWatchResultAggregation implements Entity {
         }
     }
 
-    @PersistenceCapable
-    @EmbeddedOnly
-    public static class ResponseTime extends StatusCodeEmbedded implements Serializable {
-        private static final long serialVersionUID = -3187766819477331700L;
-
+    public abstract static class ResponseTime extends StatusCodeEmbedded {
         @Persistent
         private double responseTime;
 
@@ -68,6 +65,24 @@ public class UrlWatchResultAggregation implements Entity {
         public void setResponseTime(double responseTime) {
             this.responseTime = responseTime;
         }
+    }
+
+    @PersistenceCapable
+    @EmbeddedOnly
+    public static class AvgResponseTime extends ResponseTime implements Serializable {
+        private static final long serialVersionUID = -3187766819477331700L;
+    }
+
+    @PersistenceCapable
+    @EmbeddedOnly
+    public static class MinResponseTime extends ResponseTime implements Serializable {
+        private static final long serialVersionUID = -7466702286053644779L;
+    }
+
+    @PersistenceCapable
+    @EmbeddedOnly
+    public static class MaxResponseTime extends ResponseTime implements Serializable {
+        private static final long serialVersionUID = 31316133522366322L;
     }
 
     @PrimaryKey
@@ -90,13 +105,13 @@ public class UrlWatchResultAggregation implements Entity {
     private long minTimestamp = Long.MAX_VALUE;
 
     @Persistent
-    private List<ResponseTime> avgResponseTimes = new ArrayList<ResponseTime>();
+    private List<AvgResponseTime> avgResponseTimes = new ArrayList<AvgResponseTime>();
 
-    // @Persistent
-    private List<ResponseTime> maxResponseTimes = new ArrayList<ResponseTime>();
+    @Persistent
+    private List<MaxResponseTime> maxResponseTimes = new ArrayList<MaxResponseTime>();
 
-    // @Persistent
-    private List<ResponseTime> minResponseTimes = new ArrayList<ResponseTime>();
+    @Persistent
+    private List<MinResponseTime> minResponseTimes = new ArrayList<MinResponseTime>();
 
     @Persistent
     private List<StatusCodeCount> statusCodeCounts = new ArrayList<StatusCodeCount>();
@@ -154,46 +169,46 @@ public class UrlWatchResultAggregation implements Entity {
     }
 
     protected void processMinResponseTimes(int statusCode, long responseTimeMillis) {
-        for (ResponseTime responseTime : getMinResponseTimes()) {
+        for (MinResponseTime responseTime : getMinResponseTimes()) {
             if (responseTime.getStatusCode() == statusCode) {
                 responseTime.setResponseTime(Math.min(responseTime.getResponseTime(), responseTimeMillis));
                 return;
             }
         }
-        ResponseTime minRespinseTime = new ResponseTime();
+        MinResponseTime minRespinseTime = new MinResponseTime();
         minRespinseTime.setStatusCode(statusCode);
         minRespinseTime.setResponseTime(responseTimeMillis);
         getMinResponseTimes().add(minRespinseTime);
     }
 
     protected void processMaxResponseTimes(int statusCode, long responseTimeMillis) {
-        for (ResponseTime responseTime : getMaxResponseTimes()) {
+        for (MaxResponseTime responseTime : getMaxResponseTimes()) {
             if (responseTime.getStatusCode() == statusCode) {
                 responseTime.setResponseTime(Math.max(responseTime.getResponseTime(), responseTimeMillis));
                 return;
             }
         }
-        ResponseTime maxResponseTime = new ResponseTime();
+        MaxResponseTime maxResponseTime = new MaxResponseTime();
         maxResponseTime.setStatusCode(statusCode);
         maxResponseTime.setResponseTime(responseTimeMillis);
         getMaxResponseTimes().add(maxResponseTime);
     }
 
     protected void processAvgResponseTimes(int statusCode, long responseTimeMillis) {
-        for (ResponseTime responseTime : getAvgResponseTimes()) {
+        for (AvgResponseTime responseTime : getAvgResponseTimes()) {
             if (responseTime.getStatusCode() == statusCode) {
                 double totalResponseTime = (responseTime.getResponseTime() * getAggregateCount()) + responseTimeMillis;
                 responseTime.setResponseTime(totalResponseTime / (getAggregateCount() + 1));
                 return;
             }
         }
-        ResponseTime avgResponseTime = new ResponseTime();
+        AvgResponseTime avgResponseTime = new AvgResponseTime();
         avgResponseTime.setStatusCode(statusCode);
         avgResponseTime.setResponseTime(responseTimeMillis);
         getAvgResponseTimes().add(avgResponseTime);
     }
 
-    public List<ResponseTime> getAvgResponseTimes() {
+    public List<AvgResponseTime> getAvgResponseTimes() {
         return avgResponseTimes;
     }
 
@@ -214,7 +229,7 @@ public class UrlWatchResultAggregation implements Entity {
         return url;
     }
 
-    public void setAvgResponseTimes(List<ResponseTime> avgResponseTimes) {
+    public void setAvgResponseTimes(List<AvgResponseTime> avgResponseTimes) {
         this.avgResponseTimes = avgResponseTimes;
     }
 
@@ -235,6 +250,7 @@ public class UrlWatchResultAggregation implements Entity {
         this.url = url;
     }
 
+    @NotPersistent
     public Schedule getAggregation() {
         return Schedule.valueOf(aggregationName);
     }
@@ -263,19 +279,19 @@ public class UrlWatchResultAggregation implements Entity {
         this.statusCodeCounts = statusCodeCounts;
     }
 
-    public List<ResponseTime> getMaxResponseTimes() {
+    public List<MaxResponseTime> getMaxResponseTimes() {
         return maxResponseTimes;
     }
 
-    public void setMaxResponseTimes(List<ResponseTime> maxResponseTimes) {
+    public void setMaxResponseTimes(List<MaxResponseTime> maxResponseTimes) {
         this.maxResponseTimes = maxResponseTimes;
     }
 
-    public List<ResponseTime> getMinResponseTimes() {
+    public List<MinResponseTime> getMinResponseTimes() {
         return minResponseTimes;
     }
 
-    public void setMinResponseTimes(List<ResponseTime> minResponseTimes) {
+    public void setMinResponseTimes(List<MinResponseTime> minResponseTimes) {
         this.minResponseTimes = minResponseTimes;
     }
 

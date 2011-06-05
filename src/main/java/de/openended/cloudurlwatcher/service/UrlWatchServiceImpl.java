@@ -44,9 +44,9 @@ public class UrlWatchServiceImpl implements UrlWatchService {
         parameters.put("afterTimestamp", interval.getStartMillis());
         parameters.put("beforeTimestamp", interval.getEndMillis());
 
-        Collection<UrlWatchResult> urlWatchResults = repository.findByNamedQuery(UrlWatchResult.class, "findByUrlBetweenTimestamps",
-                parameters);
-        urlWatchResultAggregation.aggregateUrlWatchResults(urlWatchResults);
+//        Collection<UrlWatchResult> urlWatchResults = repository.findByNamedQuery(UrlWatchResult.class, "findByUrlBetweenTimestamps",
+//                parameters);
+//        urlWatchResultAggregation.aggregateUrlWatchResults(urlWatchResults);
 
         switch (aggregation) {
         case MINUTELY:

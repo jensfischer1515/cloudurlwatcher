@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datastore-indexes autoGenerate="true">
-  <datastore-index kind="UrlWatchResultAggregation$ResponseTime" ancestor="true" source="manual">
+  <datastore-index kind="UrlWatchResultAggregation$StatusCodeCount" ancestor="true" source="manual">
+    <property name="statusCodeCounts_INTEGER_IDX" direction="asc" />
+  </datastore-index>
+  <datastore-index kind="UrlWatchResultAggregation$MinResponseTime" ancestor="true" source="manual">
+    <property name="minResponseTimes_INTEGER_IDX" direction="asc" />
+  </datastore-index>
+  <datastore-index kind="UrlWatchResultAggregation$MaxResponseTime" ancestor="true" source="manual">
+    <property name="maxResponseTimes_INTEGER_IDX" direction="asc" />
+  </datastore-index>
+  <datastore-index kind="UrlWatchResultAggregation$AvgResponseTime" ancestor="true" source="manual">
     <property name="avgResponseTimes_INTEGER_IDX" direction="asc" />
   </datastore-index>
 </datastore-indexes>
