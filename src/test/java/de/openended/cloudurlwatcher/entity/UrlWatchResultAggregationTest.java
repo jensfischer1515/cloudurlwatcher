@@ -39,9 +39,12 @@ public class UrlWatchResultAggregationTest {
         assertEquals("maxTimestamp", 1111111, urlWatchResultAggregation.getMaxTimestamp(), 0.0);
         assertEquals("statusCodeCounts", 200, urlWatchResultAggregation.getStatusCodeCounts().get(0).getStatusCode());
         assertEquals("statusCodeCounts", 1L, urlWatchResultAggregation.getStatusCodeCounts().get(0).getCount());
-        assertEquals("minResponseTimes", new Long(100L), urlWatchResultAggregation.getMinResponseTimes().get(200));
-        assertEquals("maxResponseTimes", new Long(100L), urlWatchResultAggregation.getMaxResponseTimes().get(200));
-        assertEquals("avgResponseTimes", new Double(100.0), urlWatchResultAggregation.getAvgResponseTimes().get(200), 0.0);
+        assertEquals("minResponseTimes", 200, urlWatchResultAggregation.getMinResponseTimes().get(0).getStatusCode());
+        assertEquals("minResponseTimes", 100.0, urlWatchResultAggregation.getMinResponseTimes().get(0).getResponseTime(), 0.0);
+        assertEquals("maxResponseTimes", 200, urlWatchResultAggregation.getMaxResponseTimes().get(0).getStatusCode());
+        assertEquals("maxResponseTimes", 100.0, urlWatchResultAggregation.getMaxResponseTimes().get(0).getResponseTime(), 0.0);
+        assertEquals("avgResponseTimes", 200, urlWatchResultAggregation.getAvgResponseTimes().get(0).getStatusCode());
+        assertEquals("avgResponseTimes", 100.0, urlWatchResultAggregation.getAvgResponseTimes().get(0).getResponseTime(), 0.0);
     }
 
     @Test
@@ -60,9 +63,12 @@ public class UrlWatchResultAggregationTest {
         assertEquals("maxTimestamp", 2222222, urlWatchResultAggregation.getMaxTimestamp(), 0.0);
         assertEquals("statusCodeCounts", 200, urlWatchResultAggregation.getStatusCodeCounts().get(0).getStatusCode());
         assertEquals("statusCodeCounts", 2L, urlWatchResultAggregation.getStatusCodeCounts().get(0).getCount());
-        assertEquals("minResponseTimes", new Long(100L), urlWatchResultAggregation.getMinResponseTimes().get(200));
-        assertEquals("maxResponseTimes", new Long(150L), urlWatchResultAggregation.getMaxResponseTimes().get(200));
-        assertEquals("avgResponseTimes", new Double(125.0), urlWatchResultAggregation.getAvgResponseTimes().get(200), 0.0);
+        assertEquals("minResponseTimes", 200, urlWatchResultAggregation.getMinResponseTimes().get(0).getStatusCode());
+        assertEquals("minResponseTimes", 100.0, urlWatchResultAggregation.getMinResponseTimes().get(0).getResponseTime(), 0.0);
+        assertEquals("maxResponseTimes", 200, urlWatchResultAggregation.getMaxResponseTimes().get(0).getStatusCode());
+        assertEquals("maxResponseTimes", 150.0, urlWatchResultAggregation.getMaxResponseTimes().get(0).getResponseTime(), 0.0);
+        assertEquals("avgResponseTimes", 200, urlWatchResultAggregation.getAvgResponseTimes().get(0).getStatusCode());
+        assertEquals("avgResponseTimes", 125.0, urlWatchResultAggregation.getAvgResponseTimes().get(0).getResponseTime(), 0.0);
     }
 
     @Test
@@ -81,8 +87,11 @@ public class UrlWatchResultAggregationTest {
         assertEquals("maxTimestamp", 3333333, urlWatchResultAggregation.getMaxTimestamp(), 0.0);
         assertEquals("statusCodeCounts", 200, urlWatchResultAggregation.getStatusCodeCounts().get(0).getStatusCode());
         assertEquals("statusCodeCounts", 3L, urlWatchResultAggregation.getStatusCodeCounts().get(0).getCount());
-        assertEquals("minResponseTimes", new Long(100L), urlWatchResultAggregation.getMinResponseTimes().get(200));
-        assertEquals("maxResponseTimes", new Long(200L), urlWatchResultAggregation.getMaxResponseTimes().get(200));
-        assertEquals("avgResponseTimes", new Double(150.0), urlWatchResultAggregation.getAvgResponseTimes().get(200), 0.0);
+        assertEquals("minResponseTimes", 200, urlWatchResultAggregation.getMinResponseTimes().get(0).getStatusCode());
+        assertEquals("minResponseTimes", 100.0, urlWatchResultAggregation.getMinResponseTimes().get(0).getResponseTime(), 0.0);
+        assertEquals("maxResponseTimes", 200, urlWatchResultAggregation.getMaxResponseTimes().get(0).getStatusCode());
+        assertEquals("maxResponseTimes", 200.0, urlWatchResultAggregation.getMaxResponseTimes().get(0).getResponseTime(), 0.0);
+        assertEquals("avgResponseTimes", 200, urlWatchResultAggregation.getAvgResponseTimes().get(0).getStatusCode());
+        assertEquals("avgResponseTimes", 150.0, urlWatchResultAggregation.getAvgResponseTimes().get(0).getResponseTime(), 0.0);
     }
 }

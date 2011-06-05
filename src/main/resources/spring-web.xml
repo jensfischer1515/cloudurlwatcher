@@ -34,7 +34,7 @@
 
   <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
     <property name="exceptionAttribute" value="exception" />
-    <property name="defaultErrorView" value="error" />
+    <property name="defaultErrorView" value="error/exception" />
     <property name="defaultStatusCode" value="500" />
     <property name="preventResponseCaching" value="true" />
     <property name="warnLogCategory" value="de.openended.cloudurlwatcher" />

@@ -2,45 +2,71 @@ package de.openended.cloudurlwatcher.cron;
 
 import static org.junit.Assert.assertEquals;
 
+import org.joda.time.Period;
 import org.junit.Test;
 
 public class ScheduleTest {
-    private static final long MINUTE = 60 * 1000L;
-    private static final long HOUR = MINUTE * 60;
-    private static final long DAY = HOUR * 24;
-    private static final long WEEK = DAY * 7;
-    /** naive assumption */
-    private static final long MONTH = DAY * 31;
-    /** naive assumption */
-    private static final long YEAR = DAY * 365;
 
     @Test
     public void testMINUTELY() {
-        assertEquals(MINUTE, Schedule.MINUTELY.getInterval().toDurationMillis());
+        Period period = Schedule.MINUTELY.getInterval().toPeriod();
+        assertEquals(0, period.getMillis());
+        assertEquals(0, period.getSeconds());
+        assertEquals(1, period.getMinutes());
     }
 
     @Test
     public void testHOURLY() {
-        assertEquals(HOUR, Schedule.HOURLY.getInterval().toDurationMillis());
+        Period period = Schedule.HOURLY.getInterval().toPeriod();
+        assertEquals(0, period.getMillis());
+        assertEquals(0, period.getSeconds());
+        assertEquals(0, period.getMinutes());
+        assertEquals(1, period.getHours());
     }
 
     @Test
     public void testDAILY() {
-        assertEquals(DAY, Schedule.DAILY.getInterval().toDurationMillis());
+        Period period = Schedule.DAILY.getInterval().toPeriod();
+        assertEquals(0, period.getMillis());
+        assertEquals(0, period.getSeconds());
+        assertEquals(0, period.getMinutes());
+        assertEquals(0, period.getHours());
+        assertEquals(1, period.getDays());
     }
 
     @Test
     public void testWEEKLY() {
-        assertEquals(WEEK, Schedule.WEEKLY.getInterval().toDurationMillis());
+        Period period = Schedule.WEEKLY.getInterval().toPeriod();
+        assertEquals(0, period.getMillis());
+        assertEquals(0, period.getSeconds());
+        assertEquals(0, period.getMinutes());
+        assertEquals(0, period.getHours());
+        assertEquals(0, period.getDays());
+        assertEquals(1, period.getWeeks());
     }
 
     @Test
     public void testMONTHLY() {
-
+        Period period = Schedule.MONTHLY.getInterval().toPeriod();
+        assertEquals(0, period.getMillis());
+        assertEquals(0, period.getSeconds());
+        assertEquals(0, period.getMinutes());
+        assertEquals(0, period.getHours());
+        assertEquals(0, period.getDays());
+        assertEquals(0, period.getWeeks());
+        assertEquals(1, period.getMonths());
     }
 
     @Test
     public void testYEARLY() {
-
+        Period period = Schedule.YEARLY.getInterval().toPeriod();
+        assertEquals(0, period.getMillis());
+        assertEquals(0, period.getSeconds());
+        assertEquals(0, period.getMinutes());
+        assertEquals(0, period.getHours());
+        assertEquals(0, period.getDays());
+        assertEquals(0, period.getWeeks());
+        assertEquals(0, period.getMonths());
+        assertEquals(1, period.getYears());
     }
 }

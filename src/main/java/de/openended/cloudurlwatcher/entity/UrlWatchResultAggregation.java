@@ -3,9 +3,7 @@ package de.openended.cloudurlwatcher.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -13,25 +11,20 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Queries;
+import javax.jdo.annotations.Query;
 
 import de.openended.cloudurlwatcher.cron.Schedule;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
+@Queries({ @Query(name = "findByUrlAndAggregationNameBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResultAggregation WHERE url == :url AND aggregationName == :aggregationName AND minTimestamp >= :afterTimestamp") })
 public class UrlWatchResultAggregation implements Entity {
 
     private static final long serialVersionUID = 8924341607922074292L;
 
-    @PersistenceCapable
-    @EmbeddedOnly
-    public static class StatusCodeCount implements Serializable {
-
-        private static final long serialVersionUID = -751956095622674909L;
-
+    public static abstract class StatusCodeEmbedded {
         @Persistent
-        private int statusCode;
-
-        @Persistent
-        private long count;
+        protected int statusCode;
 
         public int getStatusCode() {
             return statusCode;
@@ -40,6 +33,16 @@ public class UrlWatchResultAggregation implements Entity {
         public void setStatusCode(int statusCode) {
             this.statusCode = statusCode;
         }
+    }
+
+    @PersistenceCapable
+    @EmbeddedOnly
+    public static class StatusCodeCount extends StatusCodeEmbedded implements Serializable {
+
+        private static final long serialVersionUID = -751956095622674909L;
+
+        @Persistent
+        private long count;
 
         public long getCount() {
             return count;
@@ -50,6 +53,23 @@ public class UrlWatchResultAggregation implements Entity {
         }
     }
 
+    @PersistenceCapable
+    @EmbeddedOnly
+    public static class ResponseTime extends StatusCodeEmbedded implements Serializable {
+        private static final long serialVersionUID = -3187766819477331700L;
+
+        @Persistent
+        private double responseTime;
+
+        public double getResponseTime() {
+            return responseTime;
+        }
+
+        public void setResponseTime(double responseTime) {
+            this.responseTime = responseTime;
+        }
+    }
+
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Long id;
@@ -57,8 +77,8 @@ public class UrlWatchResultAggregation implements Entity {
     @Persistent
     private String url;
 
-    // @Persistent
-    private Schedule aggregation;
+    @Persistent
+    private String aggregationName;
 
     @Persistent
     private long aggregateCount;
@@ -70,16 +90,15 @@ public class UrlWatchResultAggregation implements Entity {
     private long minTimestamp = Long.MAX_VALUE;
 
     @Persistent
-    private Map<Integer, Double> avgResponseTimes = new HashMap<Integer, Double>();
+    private List<ResponseTime> avgResponseTimes = new ArrayList<ResponseTime>();
 
     // @Persistent
-    private Map<Integer, Long> maxResponseTimes = new HashMap<Integer, Long>();
+    private List<ResponseTime> maxResponseTimes = new ArrayList<ResponseTime>();
 
     // @Persistent
-    private Map<Integer, Long> minResponseTimes = new HashMap<Integer, Long>();
+    private List<ResponseTime> minResponseTimes = new ArrayList<ResponseTime>();
 
     @Persistent
-    // @Embedded
     private List<StatusCodeCount> statusCodeCounts = new ArrayList<StatusCodeCount>();
 
     public UrlWatchResultAggregation(String url) {
@@ -135,22 +154,46 @@ public class UrlWatchResultAggregation implements Entity {
     }
 
     protected void processMinResponseTimes(int statusCode, long responseTimeMillis) {
-        long minResponseTime = minResponseTimes.containsKey(statusCode) ? minResponseTimes.get(statusCode) : Long.MAX_VALUE;
-        minResponseTimes.put(statusCode, Math.min(minResponseTime, responseTimeMillis));
+        for (ResponseTime responseTime : getMinResponseTimes()) {
+            if (responseTime.getStatusCode() == statusCode) {
+                responseTime.setResponseTime(Math.min(responseTime.getResponseTime(), responseTimeMillis));
+                return;
+            }
+        }
+        ResponseTime minRespinseTime = new ResponseTime();
+        minRespinseTime.setStatusCode(statusCode);
+        minRespinseTime.setResponseTime(responseTimeMillis);
+        getMinResponseTimes().add(minRespinseTime);
     }
 
     protected void processMaxResponseTimes(int statusCode, long responseTimeMillis) {
-        long maxResponseTime = maxResponseTimes.containsKey(statusCode) ? maxResponseTimes.get(statusCode) : Long.MIN_VALUE;
-        maxResponseTimes.put(statusCode, Math.max(maxResponseTime, responseTimeMillis));
+        for (ResponseTime responseTime : getMaxResponseTimes()) {
+            if (responseTime.getStatusCode() == statusCode) {
+                responseTime.setResponseTime(Math.max(responseTime.getResponseTime(), responseTimeMillis));
+                return;
+            }
+        }
+        ResponseTime maxResponseTime = new ResponseTime();
+        maxResponseTime.setStatusCode(statusCode);
+        maxResponseTime.setResponseTime(responseTimeMillis);
+        getMaxResponseTimes().add(maxResponseTime);
     }
 
     protected void processAvgResponseTimes(int statusCode, long responseTimeMillis) {
-        double avgResponseTime = avgResponseTimes.containsKey(statusCode) ? avgResponseTimes.get(statusCode) : responseTimeMillis;
-        double totalResponseTime = (avgResponseTime * this.aggregateCount) + responseTimeMillis;
-        avgResponseTimes.put(statusCode, (totalResponseTime / (this.aggregateCount + 1)));
+        for (ResponseTime responseTime : getAvgResponseTimes()) {
+            if (responseTime.getStatusCode() == statusCode) {
+                double totalResponseTime = (responseTime.getResponseTime() * getAggregateCount()) + responseTimeMillis;
+                responseTime.setResponseTime(totalResponseTime / (getAggregateCount() + 1));
+                return;
+            }
+        }
+        ResponseTime avgResponseTime = new ResponseTime();
+        avgResponseTime.setStatusCode(statusCode);
+        avgResponseTime.setResponseTime(responseTimeMillis);
+        getAvgResponseTimes().add(avgResponseTime);
     }
 
-    public Map<Integer, Double> getAvgResponseTimes() {
+    public List<ResponseTime> getAvgResponseTimes() {
         return avgResponseTimes;
     }
 
@@ -159,16 +202,8 @@ public class UrlWatchResultAggregation implements Entity {
         return id;
     }
 
-    public Map<Integer, Long> getMaxResponseTimes() {
-        return maxResponseTimes;
-    }
-
     public long getMaxTimestamp() {
         return maxTimestamp;
-    }
-
-    public Map<Integer, Long> getMinResponseTimes() {
-        return minResponseTimes;
     }
 
     public long getMinTimestamp() {
@@ -179,7 +214,7 @@ public class UrlWatchResultAggregation implements Entity {
         return url;
     }
 
-    public void setAvgResponseTimes(Map<Integer, Double> avgResponseTimes) {
+    public void setAvgResponseTimes(List<ResponseTime> avgResponseTimes) {
         this.avgResponseTimes = avgResponseTimes;
     }
 
@@ -188,16 +223,8 @@ public class UrlWatchResultAggregation implements Entity {
         this.id = id;
     }
 
-    public void setMaxResponseTimes(Map<Integer, Long> maxResponseTimes) {
-        this.maxResponseTimes = maxResponseTimes;
-    }
-
     public void setMaxTimestamp(long maxTimestamp) {
         this.maxTimestamp = maxTimestamp;
-    }
-
-    public void setMinResponseTimes(Map<Integer, Long> minResponseTimes) {
-        this.minResponseTimes = minResponseTimes;
     }
 
     public void setMinTimestamp(long minTimestamp) {
@@ -209,11 +236,15 @@ public class UrlWatchResultAggregation implements Entity {
     }
 
     public Schedule getAggregation() {
-        return aggregation;
+        return Schedule.valueOf(aggregationName);
     }
 
-    public void setAggregation(Schedule aggregation) {
-        this.aggregation = aggregation;
+    public String getAggregationName() {
+        return aggregationName;
+    }
+
+    public void setAggregationName(String aggregationName) {
+        this.aggregationName = aggregationName;
     }
 
     public long getAggregateCount() {
@@ -231,4 +262,21 @@ public class UrlWatchResultAggregation implements Entity {
     public void setStatusCodeCounts(List<StatusCodeCount> statusCodeCounts) {
         this.statusCodeCounts = statusCodeCounts;
     }
+
+    public List<ResponseTime> getMaxResponseTimes() {
+        return maxResponseTimes;
+    }
+
+    public void setMaxResponseTimes(List<ResponseTime> maxResponseTimes) {
+        this.maxResponseTimes = maxResponseTimes;
+    }
+
+    public List<ResponseTime> getMinResponseTimes() {
+        return minResponseTimes;
+    }
+
+    public void setMinResponseTimes(List<ResponseTime> minResponseTimes) {
+        this.minResponseTimes = minResponseTimes;
+    }
+
 }

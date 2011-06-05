@@ -3,6 +3,22 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
+
+  <!-- Important system properties from GAE runtime as Spring beans for dependency injection -->
+  <bean id="com.google.appengine.application.version" class="java.lang.String">
+    <constructor-arg value="${com.google.appengine.application.version}" />
+  </bean>
+  <bean id="com.google.appengine.application.id" class="java.lang.String">
+    <constructor-arg value="${com.google.appengine.application.id}" />
+  </bean>
+  <bean id="com.google.appengine.runtime.version" class="java.lang.String">
+    <constructor-arg value="${com.google.appengine.runtime.version}" />
+  </bean>
+  <bean id="com.google.appengine.runtime.environment" class="java.lang.String">
+    <constructor-arg value="${com.google.appengine.runtime.environment}" />
+  </bean>
+
+
   <bean id="datastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getDatastoreService" lazy-init="false" />
 
   <bean id="asyncDatastoreService" class="com.google.appengine.api.datastore.DatastoreServiceFactory" factory-method="getAsyncDatastoreService" lazy-init="false" />

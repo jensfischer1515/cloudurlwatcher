@@ -19,10 +19,10 @@ import org.apache.commons.lang.builder.ToStringStyle;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 @Queries({
         @Query(name = "findByUrl", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE url == :url ORDER BY timestamp DESC"),
-        @Query(name = "findAfterTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE timestamp > :afterTimestamp ORDER BY timestamp DESC"),
-        @Query(name = "findBeforeTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE timestamp < :beforeTimestamp ORDER BY timestamp DESC"),
-        @Query(name = "findBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE timestamp > :afterTimestamp AND timestamp < :beforeTimestamp ORDER BY timestamp DESC"),
-        @Query(name = "findByUrlBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE url == :url AND timestamp > :afterTimestamp AND timestamp < :beforeTimestamp ORDER BY timestamp DESC") })
+        @Query(name = "findAfterTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE timestamp >= :afterTimestamp ORDER BY timestamp DESC"),
+        @Query(name = "findBeforeTimestamp", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE timestamp <= :beforeTimestamp ORDER BY timestamp DESC"),
+        @Query(name = "findBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE timestamp >= :afterTimestamp AND timestamp <= :beforeTimestamp ORDER BY timestamp DESC"),
+        @Query(name = "findByUrlBetweenTimestamps", value = "SELECT FROM de.openended.cloudurlwatcher.entity.UrlWatchResult WHERE url == :url AND timestamp >= :afterTimestamp AND timestamp <= :beforeTimestamp ORDER BY timestamp DESC") })
 public class UrlWatchResult implements Comparable<UrlWatchResult>, Entity {
 
     private static final long serialVersionUID = 799651060422411138L;

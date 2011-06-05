@@ -37,27 +37,27 @@ public class UrlWatchServiceImpl implements UrlWatchService {
     @Override
     public UrlWatchResultAggregation aggregateUrlWatchResults(String url, Interval interval, Schedule aggregation) {
         UrlWatchResultAggregation urlWatchResultAggregation = new UrlWatchResultAggregation(url);
+        urlWatchResultAggregation.setAggregationName(aggregation.name());
 
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("url", url);
         parameters.put("afterTimestamp", interval.getStartMillis());
         parameters.put("beforeTimestamp", interval.getEndMillis());
 
+        Collection<UrlWatchResult> urlWatchResults = repository.findByNamedQuery(UrlWatchResult.class, "findByUrlBetweenTimestamps",
+                parameters);
+        urlWatchResultAggregation.aggregateUrlWatchResults(urlWatchResults);
+
         switch (aggregation) {
         case MINUTELY:
-            Collection<UrlWatchResult> urlWatchResults = repository.findByNamedQuery(UrlWatchResult.class, "findByUrlBetweenTimestamps",
-                    parameters);
-            urlWatchResultAggregation.aggregateUrlWatchResults(urlWatchResults);
+            // do stuff based on UrlWatchResults
             break;
         case HOURLY:
-            break;
         case DAILY:
-            break;
         case WEEKLY:
-            break;
         case MONTHLY:
-            break;
         case YEARLY:
+            // do different stuff based on UrlWatchResultAggregations
             break;
         }
 

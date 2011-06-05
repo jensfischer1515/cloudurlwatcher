@@ -24,7 +24,7 @@
   </resource-files>
 
   <admin-console>
-    <page name="Admin" url="/admin/contextParams" />
+    <page name="Admin" url="/admin/all" />
     <page name="Appstats" url="/appstats/stats" />
   </admin-console>
 
@@ -37,13 +37,9 @@
 
   <system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/classes/logging.properties" />
-    <property name="gae.application.name" value="${project.name}" />
-    <property name="gae.application.version" value="${gae.application.version}" />
   </system-properties>
 
-  <env-variables>
-    <env-var name="DEFAULT_ENCODING" value="UTF-8" />
-  </env-variables>
+  <!--env-variables> <env-var name="DEFAULT_ENCODING" value="UTF-8" /> </env-variables -->
 
   <inbound-services>
     <service>warmup</service>

@@ -7,60 +7,81 @@ public enum Schedule {
 
     MINUTELY {
         @Override
-        public Interval getInterval() {
-            DateTime end = getCurrentDateTime().withMillisOfSecond(0).withSecondOfMinute(0);
-            DateTime start = end.minusMinutes(1);
-            return new Interval(start, end);
+        protected DateTime start() {
+            return end().minusMinutes(1);
+        }
+
+        @Override
+        protected DateTime end() {
+            return now().withMillisOfSecond(0).withSecondOfMinute(0);
         }
     },
     HOURLY {
         @Override
-        public Interval getInterval() {
-            DateTime end = getCurrentDateTime().withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0);
-            DateTime start = end.minusHours(1);
-            return new Interval(start, end);
+        protected DateTime start() {
+            return end().minusHours(1);
+        }
+
+        @Override
+        protected DateTime end() {
+            return MINUTELY.end().withMinuteOfHour(0);
         }
     },
     DAILY {
         @Override
-        public Interval getInterval() {
-            DateTime end = getCurrentDateTime().withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0).withHourOfDay(0);
-            DateTime start = end.minusDays(1);
-            return new Interval(start, end);
+        protected DateTime start() {
+            return end().minusDays(1);
+        }
+
+        @Override
+        protected DateTime end() {
+            return HOURLY.end().withHourOfDay(0);
         }
     },
     WEEKLY {
         @Override
-        public Interval getInterval() {
-            DateTime end = getCurrentDateTime().withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0).withHourOfDay(0)
-                    .withDayOfWeek(1);
-            DateTime start = end.minusWeeks(1);
-            return new Interval(start, end);
+        protected DateTime start() {
+            return end().minusWeeks(1);
+        }
+
+        @Override
+        protected DateTime end() {
+            return DAILY.end().withDayOfWeek(1);
         }
     },
     MONTHLY {
         @Override
-        public Interval getInterval() {
-            DateTime end = getCurrentDateTime().withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0).withHourOfDay(0)
-                    .withDayOfMonth(1);
-            DateTime start = end.minusMonths(1);
-            return new Interval(start, end);
+        protected DateTime start() {
+            return end().minusMonths(1);
+        }
+
+        @Override
+        protected DateTime end() {
+            return DAILY.end().withDayOfMonth(1);
         }
     },
     YEARLY {
         @Override
-        public Interval getInterval() {
-            DateTime end = getCurrentDateTime().withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0).withHourOfDay(0)
-                    .withDayOfYear(1);
-            DateTime start = end.minusYears(1);
-            return new Interval(start, end);
+        protected DateTime start() {
+            return end().minusYears(1);
+        }
+
+        @Override
+        protected DateTime end() {
+            return DAILY.end().withDayOfYear(1);
         }
     };
 
-    protected DateTime getCurrentDateTime() {
+    public Interval getInterval() {
+        return new Interval(start(), end());
+    }
+
+    protected DateTime now() {
         return new DateTime();
     }
 
-    public abstract Interval getInterval();
+    protected abstract DateTime end();
+
+    protected abstract DateTime start();
 
 }

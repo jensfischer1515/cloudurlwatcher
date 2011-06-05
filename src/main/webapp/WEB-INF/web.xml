@@ -7,18 +7,6 @@
 
   <distributable />
 
-  <context-param>
-    <description>Name of the Google App Engine application</description>
-    <param-name>gae.application.name</param-name>
-    <param-value>${project.name}</param-value>
-  </context-param>
-
-  <context-param>
-    <description>Version of the Google App Engine application</description>
-    <param-name>gae.application.version</param-name>
-    <param-value>${gae.application.version}</param-value>
-  </context-param>
-
   <servlet>
     <servlet-name>dispatcher</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -36,6 +24,7 @@
   <servlet>
     <servlet-name>appstats</servlet-name>
     <servlet-class>com.google.appengine.tools.appstats.AppstatsServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>appstats</servlet-name>
@@ -45,6 +34,7 @@
   <servlet>
     <servlet-name>remoteApi</servlet-name>
     <servlet-class>com.google.apphosting.utils.remoteapi.RemoteApiServlet</servlet-class>
+    <load-on-startup>3</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>remoteApi</servlet-name>

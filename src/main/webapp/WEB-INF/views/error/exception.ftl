@@ -1,0 +1,9 @@
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+<h1>Exception</h1>
+<p>${exception!}</p>
+</body>
+</html>
